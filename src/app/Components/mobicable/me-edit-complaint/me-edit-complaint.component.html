@@ -1,0 +1,588 @@
+<!-- <header>
+    <app-me-header-nav></app-me-header-nav>
+</header> -->
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+    <!-- A sidebar -->
+    <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+        <app-me-left-side-nav></app-me-left-side-nav>
+    </ng-sidebar>
+
+    <!-- Page content -->
+    <div ng-sidebar-content>
+        <!-- header toolbar  Start-->
+        <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+        <!-- header toolbar  End-->
+
+        <section id="me-breadcrumb">
+            <nav class="mt-ng-075">
+                <div class="nav-wrapper me-gradient-white pl-1">
+                    <div class="col s12">
+                        <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+                        <a [routerLink]="['/managecomplaint']" class="breadcrumb  ">Manage Complaint</a>
+                        <a [routerLink]="['/editcomplaint']" class="breadcrumb  ">Edit Complaint</a>
+
+                    </div>
+                </div>
+            </nav>
+        </section>
+
+        <div class="container mb-3">
+            <!--Main Container - Start -->
+            <main class="mt-ng-1 mt-1">
+                <div class="pl-2 pr-2">
+                    <!--Section editComplaint - Start -->
+                    <section id="editComplaint">
+
+                        <!-- show form pre-loader - start -->
+                        <div class="row middle-xs center-xs mt-5" *ngIf="this.showLoader">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <app-me-form-preloader></app-me-form-preloader>
+                            </div>
+                        </div>
+                        <!-- show form pre-loader - end -->
+                        <!-- Form Content Row - Start -->
+                        <form [formGroup]="editComplaintSummary" (ngSubmit)="onSubmit(editComplaintSummary.value)" [class.error]="!editComplaintSummary.valid && editComplaintSummary.touched">
+
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12	">
+                                    <!-- CardPanel#1 - Start -->
+
+                                    <div class="card-panel m-0 p-0" *ngIf="!this.showLoader">
+                                        <!-- *ngIf="!this.showLoader" -->
+
+                                        <!-- Form Header Row - Start -->
+                                        <div class="row middle-xs mb-1 pb-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                    <i class="fas fa-edit fa-fw mr-1"></i>Edit Complaint </h5>
+                                            </div>
+
+                                        </div>
+                                        <!-- Form Header Row - End -->
+
+                                        <section id="customerDetails">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12	">
+                                                    <!-- CardPanel#3 - Start -->
+                                                    <div class="card-panel m-1 p-0">
+
+                                                        <!--CardPanel#3 row#1 - Start -->
+                                                        <div class="row mb-0">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                                                <!-- Form Header Row - Start -->
+                                                                <div class="row middle-xs mb-0 pb-0">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                        <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                                            <i class="fas fa-user fa-fw  "></i>Customer Details</h5>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- *********** Customer Details ~ Start ***********  -->
+                                                                <div class="row mb-0 mt-0 pb-0" *ngIf="!showLoader">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                        <app-me-customer-details [setCustomerNumberObj]="this.customerNumberObj" (customerObjectEvent)="receiveCustomerDetailsObject($event)"></app-me-customer-details>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- *********** Customer Details ~ End ***********    -->
+
+                                                            </div>
+                                                        </div>
+                                                        <!--CardPanel#3 row#1 - End -->
+                                                    </div>
+                                                    <!-- CardPanel#3 - end -->
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <!-- STBDetails Modal -->
+                                        <div id="ViewSTBDetails" class="modal modal-fixed-footer">
+                                            <div class="modal-content">
+                                                <!-- Form Header Row - Start -->
+                                                <div class="row middle-xs mb-0 pb-0">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                        <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                            <i class="fas fa-tv  fa-fw"></i>Subscription Details</h5>
+                                                    </div>
+
+                                                </div>
+                                                <!-- Form Header Row - End -->
+
+                                                <div class="divider blue lighten-4"></div>
+
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                        <section id="subscriptionTable">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-6">
+                                                                    <td-search-box #searchBox backIcon="arrow_back" [alwaysVisible]="true" class="push-center-sm" placeholder="Search here" (searchDebounce)="search($event)" flex>
+                                                                    </td-search-box>
+                                                                </div>
+                                                            </div>
+
+                                                            <div *ngIf="!showLoader">
+                                                                <mat-divider></mat-divider>
+                                                            </div>
+                                                            <div *ngIf="showLoader">
+                                                                <app-me-table-preloader></app-me-table-preloader>
+                                                            </div>
+                                                            <div class="center m-1" *ngIf="this.showNoRecords">
+                                                                <span class="me-status-chip red lighten-1">No Records</span>
+                                                            </div>
+                                                            <td-data-table #dataTable [data]="filteredData" [columns]="columns" [sortable]="true" [sortBy]="sortBy" [(ngModel)]="selectedRows" [sortOrder]="sortOrder" (sortChange)="sort($event)" [style.height.px]="300" [ngModelOptions]="{standalone: true}">
+                                                                <ng-template tdDataTableTemplate="service_status" let-value="value">
+                                                                    <span *ngIf="value == 'ACTIVE'" class="me-status-chip green lighten-1 right-align">{{value}}</span>
+                                                                    <span *ngIf="value == 'DISCONNECTED'" class="me-status-chip red lighten-1 right-align">{{value}}</span>
+                                                                    <span *ngIf="value == 'SUSPENDED'" class="me-status-chip orange lighten-1 right-align">{{value}}</span>
+                                                                </ng-template>
+
+                                                            </td-data-table>
+
+                                                            <td-paging-bar #pagingBar [pageSize]="pageSize" [total]="filteredTotal" (change)="page($event)">
+                                                                <span hide-xs>Rows per page:</span>
+                                                                <mat-select [style.width.px]="50" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}">
+                                                                    <mat-option *ngFor="let size of [50,100,500]" [value]="size">
+                                                                        {{size}}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                                {{pagingBar.range}} <span hide-xs>of {{pagingBar.total}}</span>
+                                                            </td-paging-bar>
+                                                        </section>
+                                                        <section id="subscriptionTable-Pagination">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-sm-12 col-mdd-12 col-lg-12">
+                                                                    <pagination-control class="my-pagination" directionLinks="true" (pageChange)="currentpage = $event" align="right"></pagination-control>
+
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer cg-modal-footer mr-2">
+                                                <a class="modal-action modal-close btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable">
+                                                Close <i class="fas fa-times-circle  fa-fw "></i> </a>
+                                            </div>
+                                        </div>
+                                        <!--End - Modal--- -->
+
+                                        <section class="complaintSummary">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12	">
+                                                    <!-- CardPanel#3 - Start -->
+                                                    <div class="card-panel m-1 p-0">
+                                                        <!--CardPanel#3 row#1 - Start -->
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <!-- Form Header Row - Start -->
+                                                                <div class="row middle-xs m-0 p-0">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 grey lighten-3">
+                                                                        <h5 class="left darkPrimaryText me-text-shawdow font-weight-500">Complaint Summary</h5>
+                                                                        <a class="btn mt-1 right waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger" id="addComplaint" href="#addComplaintModal">
+                                                                    EDIT <i class="fas fa-edit  fa-fw"></i></a>
+                                                                    </div>
+                                                                    <!-- <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
+                                                            <a class="btn right waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger" id="addComplaint" href="#addComplaintModal">
+                                                                EDIT <i class="fas fa-edit  fa-fw"></i></a>
+                                                        </div> -->
+                                                                </div>
+                                                                <!-- Form Header Row - End -->
+
+                                                                <!-- Add Complaint Modal Window  --------------- -->
+                                                                <div id="addComplaintModal" class="modal modal-fixed-footer">
+                                                                    <div class="modal-content">
+                                                                        <!-- Form Header Row - Start -->
+                                                                        <div class="row middle-xs mb-0 pb-0">
+                                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                                                    <i class="fas fa-edit  fa-fw "></i> Edit Complaint Summary</h5>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Form Header Row - End -->
+                                                                        <div class="divider blue lighten-4"></div>
+                                                                        <div class="card-panel col-xs-12 col-sm-12 col-md-12 col-lg-12 m-2">
+                                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                <div class="row m-2">
+                                                                                    <div class="input-field  col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                                                        <select id="complaintType" [formControl]="editComplaintSummary.controls['complaint_type']" required>
+                                                                            <option value="" disabled>Choose your option</option>
+                                                                            <option value="SRVC">Service</option>
+                                                                            <option value="PYMNT">Payment</option>
+                                                                        </select>
+                                                                                        <label for="complaintType" class="me-form-input-label">Complaint Type</label>
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+                                                                                        <div class="me-required-text left animated zoomIn" *ngIf="complaint_type.hasError('required')  && complaint_type.touched">
+                                                                                            <small class="">
+                                                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                        </div>
+                                                                                        <div class="me-helper-text left animated zoomIn" *ngIf="!complaint_type.valid && !complaint_type.touched">
+                                                                                            <small class="">
+                                                                                <i class="fas fa-info-circle fa-fw"></i>Select Complaint Type</small>
+
+                                                                                        </div>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+
+                                                                                    </div>
+                                                                                    <div class="input-field  col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                                        <input id="complaintDescription" type="text" [formControl]="editComplaintSummary.controls['complaint_description']" class="validate" app-restrict-input="words" required maxlength="100" data-length="100">
+                                                                                        <label for="complaintDescription" class="me-form-input-label">Complaint Description</label>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+                                                                                        <div class="me-required-text left animated zoomIn" *ngIf="complaint_description.hasError('required')  && complaint_description.touched">
+                                                                                            <small class="">
+                                                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                        </div>
+                                                                                        <div class="me-helper-text left animated zoomIn" *ngIf="!complaint_description.valid && !complaint_description.touched">
+                                                                                            <small class="">
+                                                                                <i class="fas fa-info-circle fa-fw"></i>Enter Complaint Description</small>
+                                                                                        </div>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!--End row-->
+                                                                                <div class="row m-2">
+                                                                                    <div class=" col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                                                                                        <h6 class=" secondaryTextColor">Complaint Details </h6>
+                                                                                        <div class="divider  blue lighten-4 mb-1"></div>
+
+                                                                                        <div class="row">
+                                                                                            <div class=" col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                                                                <ul class="collection p-0">
+                                                                                                    <li class="collection-item" *ngFor="let complaintTitle of ComplaintTitles" [ngClass]="{'active': selectedListRecord == complaintTitle}">
+                                                                                                        <label>
+                                                                                            <input name="complaintTitle" type="radio" [checked]="this.selectedListRecord === this.complaintTitle" (click)="listClick($event, complaintTitle)"  [formControl]="editComplaintSummary.controls['complaint_title_id']" [value]="complaintTitle.complaint_title_id" />
+                                                                                            <span>{{complaintTitle.complaint_title}}</span>
+                                                                                        </label>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer cg-modal-footer">
+                                                                        <a class="modal-action modal-close btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable">
+                                                                            Close	<i class="fas fa-times-circle Cancel fa-fw "></i></a>
+                                                                        <a (click)="editComplaintDataSummary()" class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable">
+                                                                            Save	<i class="fas fa-check-circle  fa-fw "></i> </a>
+                                                                    </div>
+                                                                </div>
+                                                                <!--end -Modal Window-->
+
+                                                                <div class="row blue lighten-5 m-1">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                        <div class="row m-1">
+                                                                            <div class="col-xs-3 col-sm-3 col-md-1 col-lg-1 padding-1">
+                                                                                <strong class="blue-text text-darken-2">Title</strong>
+                                                                            </div>
+                                                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 padding-1 ml-1">
+                                                                                <strong>{{this.ComplaintSummary.complaintTitle}} </strong>
+                                                                            </div>
+                                                                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 padding-1">
+                                                                                <span class="blue-text text-darken-2">{{this.ComplaintSummary.complaint_number}}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row m-1 pb-1">
+                                                                            <div class="col-xs-3 col-sm-3 col-md-1 col-lg-1 padding-1">
+                                                                                <strong class="   blue-text text-darken-2 ">Description</strong>
+                                                                            </div>
+                                                                            <div class="col-xs-8 col-sm-8 col-md-10 col-lg-10 padding-1 ml-1">
+                                                                                <span> {{this.ComplaintSummary.complaint_description}}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row m-1 pb-1 middle-xs">
+                                                                            <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2 padding-1">
+                                                                                <strong class="   blue-text text-darken-2">Status</strong>
+                                                                            </div>
+                                                                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pl-0">
+                                                                                <span *ngIf="this.ComplaintSummary.complaint_status == 'REGISTERED'" class="me-status-chip orange lighten-1">{{this.ComplaintSummary.complaint_status}}</span>
+                                                                                <span *ngIf="this.ComplaintSummary.complaint_status == 'ASSIGNED'" class="me-status-chip blue lighten-1">{{this.ComplaintSummary.complaint_status}}</span>
+                                                                                <span *ngIf="this.ComplaintSummary.complaint_status == 'IN-PROGRESS'" class="me-status-chip indigo lighten-1">{{this.ComplaintSummary.complaint_status}}</span>
+                                                                                <span *ngIf="this.ComplaintSummary.complaint_status == 'CANCELLED'" class="me-status-chip red lighten-1">{{this.ComplaintSummary.complaint_status}}</span>
+                                                                                <span *ngIf="this.ComplaintSummary.complaint_status == 'CLOSED'" class="me-status-chip green lighten-1">{{this.ComplaintSummary.complaint_status}}</span>
+                                                                            </div>
+                                                                            <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 padding-1">
+                                                                                <strong class="   blue-text text-darken-2">Type</strong>
+                                                                            </div>
+                                                                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+                                                                                <span *ngIf="this.ComplaintSummary.complaint_type == 'PYMNT'" class="cg-tabContent">PAYMENT</span>
+                                                                                <span *ngIf="this.ComplaintSummary.complaint_type == 'SRVC'" class="cg-tabContent">SERVICE</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row m-1 pb-1 middle-xs">
+                                                                            <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 padding-1">
+                                                                                <strong class="   blue-text text-darken-2">Registered By</strong>
+                                                                            </div>
+                                                                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+                                                                                <span>{{this.ComplaintSummary.created_by}}</span>
+                                                                            </div>
+                                                                            <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 padding-1">
+                                                                                <strong class="   blue-text text-darken-2">Registered On</strong>
+                                                                            </div>
+                                                                            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                                                                <span>{{this.complaint_obj.complaint_date | date:'LLL d, y, h:mm:ss a'}}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--CardPanel#3 row#1 - End -->
+
+                                                    </div>
+                                                    <!-- CardPanel#3 - end -->
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <!-- Complaint Details Card Start---------------------->
+
+                                        <section id="compliantDetails">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12	">
+                                                    <!-- CardPanel#3 - Start -->
+                                                    <div class="card-panel m-1 p-0">
+                                                        <!--CardPanel#3 row#1 - Start -->
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <!-- Form Header Row - Start -->
+                                                                <div class="row middle-xs m-0 p-0 ">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 grey lighten-3">
+                                                                        <h5 class="left darkPrimaryText me-text-shawdow font-weight-500">Complaint Progress Details</h5>
+                                                                        <a (click)="resetModelFields()" class="btn mt-1 right waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger" id="addComplaint" href="#addComplaintProgressModel">
+                                                                    Add <i class="fas fa-plus-circle  fa-fw"></i></a>
+                                                                    </div>
+                                                                    <!-- <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
+                                                            <a (click)="resetModelFields()" class="btn right waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger" id="addComplaint" href="#addComplaintProgressModel">
+                                                            Add <i class="fas fa-plus-circle  fa-fw"></i></a>
+
+                                                        </div> -->
+                                                                </div>
+                                                                <!-- Form Header Row - End -->
+
+                                                                <!-- Add Complaint Modal Window -->
+                                                                <div id="addComplaintProgressModel" class="modal modal-fixed-footer">
+                                                                    <div class="modal-content">
+                                                                        <!-- Form Header Row - Start -->
+                                                                        <div class="row middle-xs mb-0 pb-0">
+                                                                            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8  secondaryTextColor">
+                                                                                <h5>Add Complaint Details</h5>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Form Header Row - End -->
+                                                                        <div class="divider me-divider-color mb-1"></div>
+                                                                        <div class="card-panel col-xs-12 col-sm-12 col-md-12 col-lg-12 m-2">
+                                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                <div class="row">
+                                                                                    <div class="input-field col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                                                        <select id="complaint_status" [formControl]="AddComplaintStatus.controls['complaint_status']" required>
+                                                                                    <option value="" disabled>Choose your option</option>
+                                                                                    <option value="ASSIGNED">ASSIGNED</option>
+                                                                                    <option value="IN-PROGRESS">IN-PROGRESS</option>
+                                                                                    <option value="CANCELLED">CANCELLED</option>
+                                                                                    <option value="CLOSED">CLOSED</option>
+                                                                                </select>
+                                                                                        <label for="complaintType" class="me-form-input-label">Complaint Status</label>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+                                                                                        <div class="me-required-text left animated zoomIn" *ngIf="complaint_status.hasError('required')  && complaint_status.touched">
+                                                                                            <small class="">
+                                                                                        <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                        </div>
+                                                                                        <div class="me-helper-text left animated zoomIn" *ngIf="!complaint_status.valid && !complaint_status.touched">
+                                                                                            <small class="">
+                                                                                        <i class="fas fa-info-circle fa-fw"></i>Select Complaint Status</small>
+
+                                                                                        </div>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+
+                                                                                    </div>
+                                                                                    <div class="input-field  col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                                        <input ngui-auto-complete [formControl]="AddComplaintStatus.controls['assigned_to_name']" [source]="UsersDetailsList" placeholder="Enter User Name" required />
+
+                                                                                        <label for="customerName" class="me-form-input-label active">Assign to</label>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+                                                                                        <div class="me-required-text left animated zoomIn" *ngIf="assigned_to_name.hasError('required')  && assigned_to_name.touched">
+                                                                                            <small class="">
+                                                                                        <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                        </div>
+                                                                                        <div class="me-helper-text left animated zoomIn" *ngIf="!assigned_to_name.valid && !assigned_to_name.touched">
+                                                                                            <small class="">
+                                                                                        <i class="fas fa-info-circle fa-fw"></i>Select User Name</small>
+
+                                                                                        </div>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!--End row-->
+                                                                                <div class="row">
+                                                                                    <div class="input-field col-xs-12 col-sm-12 col-md-10 col-lg-10">
+                                                                                        <textarea id="comments" [formControl]="AddComplaintStatus.controls['complaint_comments']" required app-restrict-input="words" name="complaint_comments" class="materialize-textarea" data-length="120"></textarea>
+                                                                                        <label for="comments" class="me-form-input-label">Complaint Comments</label>
+
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+                                                                                        <div class="me-required-text left animated zoomIn" *ngIf="complaint_comments.hasError('required')  && complaint_comments.touched">
+                                                                                            <small class="">
+                                                                                            <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                        </div>
+                                                                                        <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                                            <small class=""><i class="fas fa-info-circle fa-fw"></i>Enter Complaint Comments </small>
+                                                                                        </div>
+                                                                                        <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                                        <!-- *********************  form validation  messages ********************* -->
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer cg-modal-footer">
+                                                                        <a class="modal-action modal-close btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable">
+                                                                            Close  <i class="fas fa-times-circle Cancel fa-fw "></i></a>
+                                                                        <a (click)="editComplaintProgressDetails()" class=" btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable">
+                                                                            Save  <i class="fas fa-check-circle  fa-fw "></i> </a>
+                                                                    </div>
+                                                                </div>
+                                                                <!--end -Modal Window-->
+
+                                                                <div class="divider me-divider-color mb-1"></div>
+
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                        <table class="highlight responsive-table">
+                                                                            <thead>
+                                                                                <tr class="secondaryTextColor">
+                                                                                    <th class="center-align">#</th>
+                                                                                    <th class="left-align">Complaint Comments</th>
+                                                                                    <th class="left-align">Assigned To</th>
+                                                                                    <th class="center-align">Assigned On</th>
+                                                                                    <th class="center-align">Status</th>
+                                                                                    <th class="center-align">Action</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr *ngFor="let sub of ComplaintDetailsList let i = index">
+                                                                                    <td class="center-align">{{i+1}}</td>
+                                                                                    <td>{{sub.complaint_comments}}</td>
+                                                                                    <td>{{sub.assigned_to_name}}</td>
+                                                                                    <td class="center-align">{{sub.assigned_on | date:'LLL d, y, h:mm:ss a'}}</td>
+                                                                                    <td class="center-align">
+                                                                                        <span class="me-status-chip orange lighten-4 orange-text" *ngIf="sub.complaint_status == 'REGISTERED'">{{sub.complaint_status}}</span>
+                                                                                        <span class="me-status-chip blue lighten-4 blue-text" *ngIf="sub.complaint_status == 'ASSIGNED'">{{sub.complaint_status}}</span>
+                                                                                        <span class="me-status-chip indigo lighten-4 indigo-text" *ngIf="sub.complaint_status == 'IN-PROGRESS'">{{sub.complaint_status}}</span>
+                                                                                        <span class="me-status-chip red lighten-4 red-text" *ngIf="sub.complaint_status == 'CANCELLED'">{{sub.complaint_status}}</span>
+                                                                                        <span class="me-status-chip green lighten-4 green-text" *ngIf="sub.complaint_status == 'CLOSED'">{{sub.complaint_status}}</span>
+                                                                                    </td>
+                                                                                    <td class="center-align">
+                                                                                        <a *ngIf="sub.recordType == 'N'" (click)="removeComplaintDetail(i)">
+                                                                                            <i class="far fa-trash-alt  fa-lg"></i>
+                                                                                        </a>
+                                                                                        <a *ngIf="sub.recordType == 'E'">
+                                                                                            <i class="fas fa-eye  fa-lg"></i>
+                                                                                        </a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--CardPanel#3 row#1 - End -->
+                                                    </div>
+                                                    <!-- CardPanel#3 - end -->
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <!-- Complaint Details Card Start---------------------->
+
+                                        <!-- *************************** Submit Row ***************************   -->
+                                        <div class="divider me-divider-color mb-1"></div>
+                                        <section class="mt-1  pr-2 pb-2">
+
+                                            <!-- form -submit row - Start -->
+                                            <div class="row end-lg end-sm center-xs end-md mb-0">
+                                                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+                                                    <a [routerLink]="['/managecomplaint']" class="btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable" name="cancel">
+											Cancel	<i class="fas fa-times-circle  fa-fw "></i>      
+										</a>
+                                                    <button class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" type="submit" name="action">
+											Submit	<i class="fas fa-check-circle  fa-fw "></i> 
+										</button>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+                                    <!-- CardPanel#1 - end -->
+                                </div>
+                            </div>
+                        </form>
+                        <!-- Form Content Row - End -->
+
+
+                        <div class="row" id="complaintRecordHistory" *ngIf="!this.showLoader">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="card-panel p-0 z-depth-0 me-recordHistory">
+                                    <table class="responsive-table centered">
+                                        <thead>
+                                            <tr>
+                                                <th class="  font-weight-500 m-0 p-0">
+                                                    <small>Created On</small>
+                                                </th>
+                                                <th class="   font-weight-500 m-0 p-0">
+                                                    <small>Created By</small>
+                                                </th>
+                                                <th class="   font-weight-500 m-0 p-0">
+                                                    <small>Last Modified On</small>
+                                                </th>
+                                                <th class="   font-weight-500 m-0 p-0">
+                                                    <small>Last Modified By</small>
+                                                </th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody class="m-0 p-0">
+                                            <tr class="m-0 p-0">
+                                                <td class="  m-0 p-0">
+                                                    <small>{{this.complaint_obj.created_on | date:'EEEE, LLL d, y, h:mm:ss a'}}</small>
+                                                </td>
+                                                <td class="   m-0 p-0">
+                                                    <small>{{this.complaint_obj.created_by}}</small>
+                                                </td>
+                                                <td class="   m-0 p-0">
+                                                    <small>{{this.complaint_obj.modified_on | date:'EEEE, LLL d, y, h:mm:ss a'}}</small>
+                                                </td>
+                                                <td class="   m-0 p-0">
+                                                    <small>{{this.complaint_obj.modified_by}}</small>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <simple-notifications [options]="options"></simple-notifications>
+                            </div>
+                        </div>
+                    </section>
+                    <!--Section editComplaint - End -->
+                </div>
+
+            </main>
+            <!--Main Container - End -->
+        </div>
+    </div>
+    <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

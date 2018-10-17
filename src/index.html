@@ -1,14 +1,169 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>TeradataTable</title>
-  <base href="/">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<!--
+--------------------------------- ******* == ******* == ******* == ******* --------------------------------
+	Form   : Login Page
+	Version: 1.0
+	Owner  : Mobiezy
+--------------------------------- ******* == ******* == ******* == ******* --------------------------------
+-->
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="msapplication-tap-highlight" content="no">
+  <title>MobiCable</title>
+  <base href="/">
+  <!-- <script defer src="./assets/js/fontawesome-all.min.js"></script> -->
+  <link href="./assets/css/materialize.min.css" rel="stylesheet" type="text/css">
+  <link href="./assets/css/flexboxgrid.min.css" rel="stylesheet" type="text/css">
+
+  <link href="./assets/css/animate.css" rel="stylesheet" type="text/css">
+  <link href="./assets/css/icon.css" rel="stylesheet">
+  <!-- <link href="./assets/css/fa-svg-with-js.css" rel="stylesheet"> -->
+  <link href="./assets/css/fontawesome-all.css" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> -->
+  <!-- <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet"> -->
+  <link href="https://fonts.googleapis.com/css?family=Sintony" rel="stylesheet">
+  <link href="./assets/css/me-cg-basestyle.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href="./assets/css/theme.css" />
+  <link rel="stylesheet" type="text/css" href="./assets/css/primeng.min.css" />
+  <link rel="stylesheet" type="text/css" href="./assets/css/primeicons.css" />
+  
+
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    .full-height {
+      height: 100vh
+    }
+
+    html {
+      /* font-family: 'Roboto', sans-serif; */
+      /* font-family: 'Inconsolata', monospace; */
+      font-family: 'Sintony', sans-serif;
+      */ font-weight: normal;
+      /* Adjust font size */
+      font-size: 100%;
+      -webkit-text-size-adjust: 100%;
+      /* Font varient */
+      font-variant-ligatures: none;
+      -webkit-font-variant-ligatures: none;
+      /* Smoothing */
+      text-rendering: optimizeLegibility;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      text-shadow: rgba(0, 0, 0, .01) 0 0 1px;
+    }
+
+    * {
+      /* font-family: 'Roboto', sans-serif; */
+      /* font-family: 'Inconsolata', monospace; */
+      font-family: 'Sintony', sans-serif;
+      font-weight: normal;
+      /* Adjust font size */
+      font-size: 100%;
+      -webkit-text-size-adjust: 100%;
+      /* Font varient */
+      font-variant-ligatures: none;
+      -webkit-font-variant-ligatures: none;
+      /* Smoothing */
+      text-rendering: optimizeLegibility;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      text-shadow: rgba(0, 0, 0, .01) 0 0 1px;
+    }
+
+  </style>
+  <!-- 2. Configure SystemJS -->
+
 </head>
+
 <body>
+
   <app-root></app-root>
+
+  <script src="./assets/js/jquery-3.2.1.min.js"></script>
+  <script src="./assets/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.8.0/dist/JsBarcode.all.min.js"></script>
+
+
+  <script>
+    window.addEventListener('load', function () {
+
+      //initialize and set tooltip trigger
+      var elem = document.querySelectorAll('.tooltipped');
+      var instance = M.Tooltip.init(elem, {
+        position: "bottom"
+      });
+
+      //initialize and set dropdown trigger	
+      var elem = document.querySelectorAll('.dropdown-trigger');
+      var instance = M.Dropdown.init(elem, {
+        hover: true,
+        constrainWidth: true
+      });
+
+      var elem = document.querySelector('.sidenav');
+      var instance = M.Sidenav.init(elem, {
+        edge: 'left'
+      });
+
+      var elem = document.querySelectorAll('.collapsible');
+      var instance = M.Collapsible.init(elem, {});
+
+      var elem = document.querySelectorAll('select');
+      var instance = M.Select.init(elem, {});
+
+      // initialize and set fullscreen
+      var toggleElement = document.getElementById('toggleElementID');
+      toggleElement.addEventListener("click", function () {
+        console.log('click on fullscreen index');
+        if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+          (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+          if (document.documentElement.requestFullScreen) {
+            document.documentElement.requestFullScreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullScreen) {
+            document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+          }
+        } else {
+          if (document.cancelFullScreen) {
+            document.cancelFullScreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+          }
+        }
+
+      }, false);
+
+
+
+    }, false);
+
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      // intialize input label
+      M.updateTextFields();
+
+      //initialize select drop down
+      $('select').select();
+    });
+
+  </script>
+
+
 </body>
+
+
 </html>

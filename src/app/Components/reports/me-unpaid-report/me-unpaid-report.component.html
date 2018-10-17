@@ -1,0 +1,266 @@
+<!-- <header style=" padding-left: 0px; margin-left: 0px;">
+  <app-me-header-nav></app-me-header-nav>
+</header> -->
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+        <!-- A sidebar -->
+        <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+          <app-me-left-side-nav></app-me-left-side-nav>
+        </ng-sidebar>
+      
+        <!-- Page content -->
+        <div ng-sidebar-content>
+          <!-- header toolbar  Start-->
+          <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+          <!-- header toolbar  End-->
+      
+          <section id="me-breadcrumb" style=" padding-left: 0px; margin-left: 0px;">
+            <nav class="mt-ng-075 pl-1 me-gradient-white">
+              <div class="nav-wrapper  pl-1">
+                <div class="col s12">
+                  <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+                  <a [routerLink]="['/unpaidreport']" class="breadcrumb  ">Unpaid Report</a>
+      
+                </div>
+              </div>
+            </nav>
+          </section>
+      
+          <ng-progress></ng-progress>
+      
+          <main class="mt-1">
+      
+            <form [formGroup]="reportFilter" (ngSubmit)="onSubmit(reportFilter.value)" [class.error]="!reportFilter.valid && reportFilter.touched">
+      
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-sm-12 col-md-2 col-lg-2 pr-0">
+                    <section id="reportFilters" class="">
+                      <div class="row grey lighten-3 m-0 p-0 pb-3 z-depth-3 border-radius-4 animated fadeIn">
+                        <div class="col-sm-12 m- mt-3 ml-0">
+                          <h6 class="darkPrimaryText">
+                            <i class="fa fa-search-plus fa-fw"></i> Filters </h6>
+                          <mat-divider></mat-divider>
+                          <mat-divider></mat-divider>
+                        </div>
+      
+                        <div class="col-sm-12 pt-1">
+                          <div class="me-container">
+                            <mat-form-field appearance="standard">
+                              <mat-label>Select Area</mat-label>
+      
+                              <input id="filter_area" type="text" placeholder="Select area" type="text" maxlength="50"
+                                data-length="50" [formControl]="reportFilter.controls['area_name']" matInput
+                                [matAutocomplete]="filter_area" (click)="getAreaList()">
+                              <mat-icon matSuffix (click)="clearAreaNameField()" class="grey-text text-lighten-1 cursor-pointer">clear</mat-icon>
+                              <!-- <mat-hint>Click\Type to select area</mat-hint> -->
+                              <mat-autocomplete #filter_area="matAutocomplete">
+                                <mat-option *ngFor="let area of filteredAreas | async" [value]="area.area_name">
+                                  {{ area.area_name }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 pt-1">
+                          <div class="me-container">
+                            
+                          </div>
+                        </div>
+                        <div class="col-sm-12 pt-1">
+                          <div class="me-container">
+                            
+                          </div>
+                        </div>
+                        <div class="col-sm-12 pt-1">
+                          <div class="me-container">
+                            
+                          </div>
+                        </div>
+                        <div class="col-sm-12 pt-1">
+                          <div class="me-container">
+                            
+                          </div>
+                        </div>
+                        <div class="col-sm-12 pt-1 pb-3 mb-2">
+                          <div class="me-container">
+                            <button class="btn waves-effect waves-light border-round black white-text z-depth-2 hoverable "
+                              type="submit" name="submit">Search
+                              <i class="fas fa-search  fa-fw"></i>
+                            </button>
+                          </div>
+                        </div>
+      
+                      </div>
+                    </section>
+                  </div>
+                  <div class="col-sm-12 col-md-10 col-lg-10">
+                    <div class="row p-0 m-0">
+                      <div class="col-sm-12 ml-0 pl-0">
+      
+                        <mat-tab-group>
+                                <mat-tab label="Unpaid Details">
+                                        <!-- Report Content ~ Start -->
+                                        <section id="collectionReport">
+                                          <div class="card animated fadeIn" *ngIf="showLoader">
+                                            <div class="row p-3 pt-1 m-1">
+                                              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <h5 class="center-align darkPrimaryText mb-1">Loading...<i class="fa fa-cog fa-spin  fa-fw"></i></h5>
+                                                <div class="progress">
+                                                  <div class="indeterminate"></div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <section id="reportData" *ngIf="!showLoader">
+                                            <p-table [columns]="reportCols" [value]="unpaidListArray" [scrollable]="true" [style]="{width:'100%'}"
+                                              scrollHeight="380px" #dt [paginator]="true" [rows]="200" exportFilename="{{exportFileName}}{{fileCurrentDate | date:'d_MMM_y_h_mm_ss'}}"
+                                              dataKey="customer_id" [resizableColumns]="true" columnResizeMode="expand" [responsive]="true">
+                                              <ng-template pTemplate="caption" class="animated fadeIn">
+                                                <div class="row middle-xs mb-0 pb-0">
+                                                  <div class="col-xs-6 ">
+                                                    <button class="btn waves-effect waves-light left" (click)="dt.exportCSV()">Export All</button>
+                                                    <p class="pl-2 left-align grey-text"><small><i class="fas fa-info-circle fa-fw grey-text"></i>There
+                                                        are {{unpaidListArray?.length}} records. </small></p>
+                                                  </div>
+                                                  <div class="col-xs-6">
+                                                    <div class="input-field col s12">
+                                                      <span>
+                                                        <i class="postfix fas fa-search grey-text text-lighten-1 "></i>
+                                                      </span>
+                                                      <input type="text" class="fnt-sz-100" pInputText size="50" placeholder="Search..."
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')" style="border-bottom: 1px solid #9e9e9e;">
+                                                    </div>
+                  
+                  
+                                                  </div>
+                                                </div>
+                                              </ng-template>
+                                              <ng-template pTemplate="colgroup" let-reportCols>
+                                                <colgroup>
+                                                  <col span="1"  style="width:50px">
+                                                  <col *ngFor="let col of reportCols" [style.width]="col.width+'px'">
+                                                </colgroup>
+                                              </ng-template>
+                                              <ng-template pTemplate="header" let-reportCols>
+                                                <tr>
+                  
+                                                  <th colspan="5" class="darkPrimaryText  font-weight-700">Customer Details</th>
+                                                  <th colspan="5" class="darkPrimaryText  font-weight-700">Bill Details</th> 
+                                                  <th colspan="4" class="darkPrimaryText  font-weight-700">Subscription Details</th>
+                                                </tr>
+                                                <tr>
+                                                  <th style="width:50px"></th>
+                                                  <th *ngFor="let col of reportCols" [ngStyle]="{'font-size': '0.85rem'}" pResizableColumn>
+                                                    {{col.header}}
+                                                  </th>
+                                                </tr>
+                                              </ng-template>
+                                              <ng-template pTemplate="body" let-unpaidListArray let-expanded="expanded" let-columns="reportCols">
+                                                <tr>
+                                                  <td style="width:50px">
+                                                    <a [pRowToggler]="unpaidListArray">
+                                                      <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                                                    </a>
+                                                  </td>
+                                                  <td *ngFor="let col of reportCols" [ngStyle]="{'font-size': '0.75rem'}" [ngSwitch]="col.field" class="ui-resizable-column">
+                                                    <span *ngSwitchCase="'full_name'">
+                                                      {{unpaidListArray["full_name"] }} <br>
+                                                      <small> {{unpaidListArray["phone"] }} </small>
+                                                    </span>
+                                                    <span *ngSwitchCase="'address1'">
+                                                      <small>{{unpaidListArray["address1"] }} </small>
+                                                    </span>
+                                                    <span *ngSwitchCase="'previous_due'"> 
+                                                            <span class="right-aligned" style="float:right"> {{
+                                                                    unpaidListArray["previous_due"]
+                                                                    | number :'2.2-2' }} </span>
+                                                    </span>
+                                                    <span *ngSwitchCase="'collection_amount'"> 
+                                                            <span class="right-aligned" style="float:right"> {{
+                                                                    unpaidListArray["collection_amount"]
+                                                                    | number :'2.2-2' }} </span>
+                                                    </span>
+                                                    <span *ngSwitchCase="'received_amount'"> 
+                                                            <span class="right-aligned" style="float:right"> {{
+                                                                    unpaidListArray["received_amount"]
+                                                                    | number :'2.2-2' }} </span>
+                                                    </span>
+                                                    <span *ngSwitchCase="'outstanding_balance'"> 
+                                                            <span class="right-aligned" style="float:right"> {{
+                                                                    unpaidListArray["outstanding_balance"]
+                                                                    | number :'2.2-2' }} </span>
+                                                    </span>
+
+                                                    <span *ngSwitchCase="'bill_status_desc'">
+                                                        <div class="row m-0 p-0 center-xs">
+                                                          <div class="col-xs">
+                                                            <span *ngIf=" unpaidListArray['bill_status_desc'] == 'Fully Paid'" class="me-status-chip green fnt-sz-065">
+                                                              {{ unpaidListArray["bill_status_desc"] }} </span>
+                                                            <span *ngIf=" unpaidListArray['bill_status_desc'] == 'Unpaid'" class=" me-status-chip red fnt-sz-065 ">
+                                                              {{ unpaidListArray["bill_status_desc"] }} </span>
+                                                            <span *ngIf=" unpaidListArray['bill_status_desc'] == 'Partial Paid'" class=" me-status-chip orange fnt-sz-065">
+                                                              {{ unpaidListArray["bill_status_desc"] }} </span>
+                                                          </div>
+                                                        </div>
+                                                      </span>
+                                      
+
+                                                    <span *ngSwitchCase="'stb_vc_number'"> 
+                                                      <span style=" word-wrap: break-word; white-space: pre-wrap; ">{{unpaidListArray["stb_vc_number"] }}</span>
+                                                    </span>
+                  
+                                                    <span *ngSwitchDefault> {{unpaidListArray[col.field]}}</span>
+                                                  </td>
+                                                </tr>
+                                              </ng-template>
+                                              <ng-template pTemplate="rowexpansion" let-unpaidListArray let-columns="reportCols">
+                  
+                                                <tr class="p-2">
+                                                  <td [attr.colspan]="6">
+                                                      <table id="subscription">
+                                                          <tr>
+                                                            <th>Pack</th>
+                                                            <th>STB Number</th>
+                                                            <th>VC Number</th>
+                                                            <th>Status</th>
+                                                          </tr>
+                                                          <tr>
+                                                            <td>{{unpaidListArray.subscription_name}}</td>
+                                                            <td  style=" word-wrap: break-word; white-space: pre-wrap; ">{{unpaidListArray.stb_number}}</td>
+                                                            <td  style=" word-wrap: break-word; white-space: pre-wrap; ">{{unpaidListArray.stb_vc_number}}</td>
+                                                            <td  style=" word-wrap: break-word; white-space: pre-wrap; ">{{unpaidListArray.service_status}}</td>
+                                                           
+                                                        </table>
+                                                              
+                                                  </td>
+                                                </tr>
+                  
+                                              </ng-template>
+                                            </p-table>
+                                          </section>
+                  
+                  
+                  
+                                        </section>
+                                        <!-- Report Content ~ End  (click)="calculateAgentSummary(unpaidListArray)"-->
+                  
+                                      </mat-tab>
+                          
+                        </mat-tab-group>
+      
+      
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      
+            </form>
+      
+          </main>
+        </div>
+        <!-- end -- ng-sidebar-content-->
+      </ng-sidebar-container>
+      

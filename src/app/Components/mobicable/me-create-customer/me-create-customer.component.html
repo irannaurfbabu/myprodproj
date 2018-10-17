@@ -1,0 +1,1150 @@
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+    <!-- A sidebar -->
+    <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+        <app-me-left-side-nav></app-me-left-side-nav>
+    </ng-sidebar>
+
+    <!-- Page content -->
+    <div ng-sidebar-content>
+        <!-- header toolbar  Start-->
+        <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+        <!-- header toolbar  End-->
+
+        <section id="me-breadcrumb">
+            <nav class="mt-ng-075">
+                <div class="nav-wrapper me-gradient-white pl-1">
+                    <div class="col s12">
+                        <a [routerLink]="['/home']" class="breadcrumb">Home</a>
+                        <a [routerLink]="['/managecustomer']" class="breadcrumb">Manage Customer</a>
+                        <a [routerLink]="['/customer_details']" class="breadcrumb">Create Customer</a>
+
+                    </div>
+                </div>
+            </nav>
+        </section>
+
+        <!-- <div class=" container  mb-3"> -->
+        <main class="mt-ng-1 mt-1">
+            <div class="pl-5 pr-5">
+                <!--Section manageArea - Start -->
+                <section id="createCustomer">
+                    <!-- Form Content Row - Start -->
+                    <form [formGroup]="customer_details" (ngSubmit)="onSubmit(customer_details.value)" [class.error]="!customer_details.valid && customer_details.touched && !customer_meta.valid && customer_meta.touched">
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="card-panel m-0 p-0 ">
+                                    <!-- form header ~ Start -->
+                                    <div class="row mb-0 pb-0">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <section>
+                                                <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                    <i class="fas fa-plus-square fa-fw"></i>Create Customer</h5>
+                                            </section>
+                                        </div>
+                                    </div>
+                                    <!-- form header ~ End -->
+                                    <!-- form section ~ Start -->
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <!-- Add Customer Information  ~ Start -->
+                                            <section id="customerInformation">
+                                                <h6 class="pl-1 pb-2 me-border-bottom-2 secondaryTextColor ">
+                                                    <strong>
+                            <i class="fas fa-circle fa-xs  fnt-sz-050 orange-text text-lighten-3" style="vertical-align: 40%;"></i> General Information</strong>
+                                                </h6>
+                                                <div class="row m-0 p-0">
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="area_name" placeholder="Click or type to select" type="text" class="validate" required maxlength="50" data-length="50" matInput [matAutocomplete]="auto" (click)="getAreaList()" [formControl]="customer_details.controls['area_name']">
+                                                            <label for="area_name" class="me-form-input-label me-input-label required">Area</label>
+
+                                                            <mat-autocomplete #auto="matAutocomplete">
+                                                                <mat-option *ngFor="let area of filteredAreas | async" [value]="area.area_name">
+                                                                    {{ area.area_name }}
+                                                                </mat-option>
+                                                            </mat-autocomplete>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="area_name.hasError('required')  && area_name.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!area_name.valid && !area_name.touched">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter Area</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 pr-0">
+
+                                                        <div class="input-field col s12">
+                                                            <input id="customer_id" type="text" class="validate" required maxlength="50" data-length="50" [formControl]="customer_details.controls['customer_id']">
+                                                            <label for="customer_id" class="me-form-input-label me-input-label required">Customer ID</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="customer_id.hasError('required')  && customer_id.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!customer_id.valid && !customer_id.touched">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter Customer ID</small>
+                                                            </div>
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="showNoCustomerId">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Customer ID Already Exist</small>
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-1 col-lg-1 pl-0 pr-0 pt-3">
+                                                        <a class=" me-status-chip blue lighten-4 blue-text right-align  hoverable  modal-trigger" href="#SearchCustId">Last CustID
+                                                                </a>
+                                                    </div>
+
+
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="first_name" type="text" class="validate" app-restrict-input="word" required maxlength="50" data-length="50" [formControl]="customer_details.controls['first_name']">
+                                                            <label for="first_name" class="me-form-input-label me-input-label required">First Name</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="first_name.hasError('required')  && first_name.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!first_name.valid && !first_name.touched">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter First Name</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="last_name" type="text" class="validate" app-restrict-input="word" maxlength="50" data-length="50" [formControl]="customer_details.controls['last_name']">
+                                                            <label for="last_name" class="me-form-input-label me-input-label required">Last Name</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="last_name.hasError('required')  && last_name.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!last_name.valid && !last_name.touched">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter Last Name</small>
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row m-0 p-0">
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="alias_name" type="text" class="validate" app-restrict-input="word" maxlength="50" data-length="50" [formControl]="customer_details.controls['alias_name']">
+                                                            <label for="alias_name" class="me-form-input-label me-input-label required">Alias Name</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>(optional) </small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="phone" type="text" class="validate" required app-restrict-input="phone" maxlength="10" max=10 data-length="50" [formControl]="customer_details.controls['phone']">
+                                                            <label for="phone" class="me-form-input-label me-input-label required">Phone</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="phone.hasError('required')  && phone.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!phone.valid && !phone.touched">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter Phone NO</small>
+
+                                                            </div>
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="phone.errors?.minlength">
+
+                                                                <small class=""><i class="fas fa-info-circle fa-fw"></i>It must contain 10 digits .</small>
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12 ">
+                                                            <input id="email" type="email" class="validate" maxlength="50" data-length="50" [formControl]="customer_details.controls['email']">
+                                                            <label for="email" class="me-form-input-label me-input-label">Email</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                                                  <i class="fas fa-info-circle fa-fw"></i>(optional)</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <!-- <div class="switch pr-0">
+                                                                <label for="email" class="me-form-input-label me-input-label required">Subscribe SMS</label>
+                                                                <label>
+                                                                    <span class="me-status-chip lighten-1 " checked="SMSFlag" [ngClass]="{'red': !this.SMSFlag, 'grey': this.SMSFlag  }">No</span>
+                                                                    <input type="checkbox" [formControl]="customer_meta.controls['subscribe_sms']" (click)="setSmsStatus() ">
+                                                                    <span class="lever ml-1 mr-1"></span>
+                                                                    <span class="me-status-chip  lighten-1" [ngClass]="{'green': this.SMSFlag, 'grey': !this.SMSFlag }">Yes</span>
+
+                                                                </label>
+                                                            </div> -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row m-0 p-0">
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="door_number" type="text" name="door_number" class="validate" maxlength="50" data-length="50" [formControl]="customer_details.controls['door_number']">
+                                                            <label for="door_number" class="me-form-input-label me-input-label">Door Number</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <!-- <div class="me-required-text left animated zoomIn" *ngIf="door_number.hasError('required')  && door_number.touched">
+                                                            <small class="">
+                                                                                 <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div> -->
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                                                               <i class="fas fa-info-circle fa-fw"></i>(optional)</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                        <div class="input-field col s12">
+                                                            <input id="address1" type="text" class="validate" maxlength="50" data-length="50" [formControl]="customer_details.controls['address1']">
+                                                            <label for="address1" class="me-form-input-label me-input-label required">Address</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="address1.hasError('required')  && address1.touched">
+                                                                <small class="">
+                                                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                                              <i class="fas fa-info-circle fa-fw"></i>(optional)</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="city" type="text" placeholder="Auto populated" class="me-readonly" required maxlength="50" data-length="50" readonly [formControl]="customer_details.controls['city']">
+                                                            <label for="city" class="me-form-input-label me-input-label active required">City</label>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                                                  <i class="fas fa-info-circle fa-fw"></i>Autopopulate City</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row m-0 p-0">
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="state" type="text" placeholder="Auto populated" class="me-readonly" required maxlength="50" data-length="50" readonly [formControl]="customer_details.controls['state']">
+                                                            <label for="state" class=" active me-form-input-label me-input-label  required">State</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                                                    <i class="fas fa-info-circle fa-fw"></i>Autopopulate State</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="pincode" type="text" placeholder="Auto populated" class="me-readonly" required maxlength="50" data-length="50" readonly [formControl]="customer_details.controls['pincode']">
+                                                            <label for="pincode" class=" active me-form-input-label me-input-label required">Pincode</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                                                       <i class="fas fa-info-circle fa-fw"></i>Autopopulate Pincode</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                        <div class="input-field col s12">
+                                                            <input id="remarks" type="text" class="validate" maxlength="50" data-length="50" [formControl]="customer_details.controls['remarks']">
+                                                            <label for="remarks" class="me-form-input-label me-input-label">Remarks</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                                                  <i class="fas fa-info-circle fa-fw"></i>Enter Remarks (optional) </small>
+                                                                <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                <!-- *********************  form validation  messages ********************* -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Modal Structure  Search CustId Start-->
+                                                <!-- <div id="SearchCustId" class="modal modal-fixed-footer" style=" width: 30% !important ; height: 80% !important ; "> -->
+                                                <div id="SearchCustId" class="modal modal-fixed-footer" style=" height: 80% !important ; ">
+                                                    <div class="modal-content m-0 p-0">
+                                                        <div class="row grey lighten-3">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ml-0 mr-0">
+                                                                <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                                    <i class="far fa-list-alt  fa-fw fa-lg mr-1"></i>Last 10 Customer Id's</h5>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mr-0 ml-0">
+                                                            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 ml-10">
+
+                                                                <table class="highlight responsive-table center-align">
+                                                                    <thead>
+                                                                        <tr class="grey lighten-2 pt-1 pb-1">
+                                                                            <th class="center-align fnt-sz-075">#</th>
+                                                                            <th class="fnt-sz-075 left-align">Customer ID</th>
+                                                                            <th class="left-align fnt-sz-075">Customer Name</th>
+                                                                            <th class="fnt-sz-075 center-align">Created On</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr *ngIf="showNoCustomerIdList">
+                                                                            <td colspan="4">
+                                                                                <div class="center-align">
+                                                                                    <span class="me-status-chip red lighten-1">No Records</span>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr class="pt-1 pb-1" *ngFor="let CustomerId of CustomerIdList let i=index">
+                                                                            <td class="center-align pt-1 pb-1 ">{{i+1}}</td>
+                                                                            <td class="left-align pt-1 pb-1 ">{{CustomerId.customer_id}}</td>
+                                                                            <td class="left-align pt-1 pb-1 ">{{CustomerId.full_name}}</td>
+                                                                            <td class="center-align pt-1 pb-1 ">{{CustomerId.created_on | date:' LLL d, y, h:mm:ss a'}}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+
+
+                                                                <!-- <td-data-table #dataTable [data]="filteredData" [columns]="columns" [sortable]="true" [sortBy]="sortBy" [(ngModel)]="selectedRows"
+                                                                    [sortOrder]="sortOrder" (sortChange)="sort($event)" [style.height.px]="300">
+                                                   
+                                                                </td-data-table> -->
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a class=" modal-action modal-close btn waves-effect waves-light me-gradient-45deg-light-red-darkred z-depth-2 hoverable">Close
+                                                                <i class="fa fa-ban fa-fw"></i>
+                                                              </a> </div>
+                                                </div>
+                                                <!-- Modal Structure Search CustId End-->
+
+
+
+                                                <h6 class="pl-1 pb-2 me-border-bottom-2 secondaryTextColor font-weight-500">
+                                                    <i class="fas fa-circle fa-xs  fnt-sz-050 fa-fw orange-text text-lighten-3" style="vertical-align: 40%;"></i>Additional Information</h6>
+                                                <div class="row m-0 p-0">
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <select name="first" [formControl]="customer_meta.controls['customer_category']">
+                                <option value="" disabled>Choose your option</option>
+                                <option value="R" selected>Residential</option>
+                                <option value="C">Commercial</option>
+                              </select>
+                                                            <label for="customer_category" class="me-form-input-label">
+                                <small>Customer Category</small>
+                              </label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="customer_category.hasError('required')  && remarks.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!customer_category.valid && !customer_category.touched">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter Customer Category</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="agreement_number" type="text" class="validate" maxlength="50" data-length="50" [formControl]="customer_meta.controls['agreement_number']">
+                                                            <label for="agreement_number" class="me-form-input-label me-input-label required">Agreement #</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="agreement_number.hasError('required')  && agreement_number.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>(optional)</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class=" input-field col s12">
+                                                            <!-- <input id="activation_date" type="date" [formControl]="customer_meta.controls['activation_date']" class="validate"> -->
+                                                            <label for="activation_date" class="me-form-input-label me-input-label active required">Activation Date</label>
+                                                            <input matInput [matDatepicker]="picker2" [formControl]="customer_meta.controls['activation_date']" [readonly]="true" [min]="this.minDate" [max]="this.maxDate" [ngClass]="{'me-readonly': true }" style="width:70%">
+                                                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                                            <mat-datepicker #picker2 [disabled]="false"></mat-datepicker>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="activation_date.hasError('required')  && activation_date.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!activation_date.valid && !activation_date.touched">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter Activation Date</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class=" input-field col s12">
+                                                            <input id="reminder_date" type="text" app-restrict-input="month" [formControl]="customer_meta.controls['reminder_date']" class="validate">
+                                                            <label for="reminder_date" class="me-form-input-label me-input-label active required">Reminder Day</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="reminder_date.hasError('required')  && reminder_date.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>(optional)</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row m-0 p-0">
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class=" input-field col s12">
+                                                            <input id="GSTIN" type="text" [formControl]="customer_meta.controls['GSTIN']" class="validate">
+                                                            <label for="GSTIN" class="me-form-input-label me-input-label active required">GSTIN</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="GSTIN.hasError('required')  && GSTIN.touched">
+                                                                <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>(optional)</small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                            </section>
+                                            <!-- Add Customer Information  ~ End -->
+
+                                            <!-- Add Subscription Details  ~ Start -->
+                                            <section id="subscription">
+                                                <div class="row m-0 p-0 me-border-bottom grey lighten-4 middle-xs">
+                                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 m-0 pl-1">
+                                                        <h6 class="pb-2 secondaryTextColor font-weight-500">
+                                                            <i class="fas fa-circle fa-xs  fnt-sz-050 pr-1 orange-text text-lighten-3" style="vertical-align: 40%;"></i>Subscription Details </h6>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 mt-ng-1">
+                                                        <td-search-box #searchBox backIcon="arrow_back" [alwaysVisible]="true" class="push-center-sm" placeholder="Search STB here" (searchDebounce)="search($event)" flex>
+                                                        </td-search-box>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 pl-0 ml-0">
+                                                        <span matTooltip="Add settop box">
+                              <a class="btn right flow-text waves-effect waves-light me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger primaryTextColor z-depth-3"
+                                (click)="resetsubscription();" id="addSubscription" href="#modal-subscription">
+                                <!--href="#modal-subscription"-->
+                                Add STB
+                                <i class="fas fa-plus-circle fa-sm primaryTextColor"></i>
+                              </a>
+                            </span>
+                                                    </div>
+
+                                                    <!-- Subscription - Modal ~ Start -->
+                                                    <section>
+
+                                                        <!-- Subscription Modal Structure - Start -->
+
+                                                        <div id="modal-subscription" class="modal modal-fixed-footer">
+                                                            <!-- Subscription Modal Content - Start -->
+                                                            <div class="modal-content m-0 p-0">
+                                                                <div class="row grey lighten-3">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                        <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                                            <i class="fas fa-plus-square  fa-fw fa-lg mr-1"></i>{{this.LabelFlag}} STB and Pack details</h5>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                                                                        <!-- Pack#Row#01 -->
+                                                                        <div class="row">
+                                                                            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                                                                                <div id="card-alert" class="m-0  p-0 pl-1 card grey lighten-3">
+                                                                                    <div class="card-content m-0 p-0">
+                                                                                        <p class="grey-text pl-1">
+                                                                                            <span class="accentTextColor">
+                                                <i class="fas fa-info-circle"></i>
+                                              </span>
+                                                                                            <small>Choose pack type first and select pack name to add pack. </small>
+                                                                                        </p>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Pack#Row#02 -->
+                                                                        <div class="row mb-0">
+                                                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                                                <div class=" input-field col s12">
+                                                                                    <select id="packtype" [formControl]="subscription_details.controls['stb_pack_name']">
+                                                                                            <option value="" disabled selected>Choose </option>
+                                                                                            <option value="BSPK">Base Pack</option>
+                                                                                            <option value="ADDN">Addon Pack</option>
+                                                                                            <option value="CHNL">Channel</option>
+                                                                                        </select>
+                                                                                    <label class="me-form-input-label">
+                                                                                            <small>Step1: Pack Type</small>
+                                                                                        </label>
+
+                                                                                    <!-- *********************  form validation  messages ********************* -->
+                                                                                    <!-- <div class="me-required-text left animated zoomIn" *ngIf="pack_price_type.hasError('required')  && pack_price_type.touched">
+                                                                                                  <small class="">
+                                                                          <i class="fa fa-warning fa-fw"></i>Required</small>
+                                                                                              </div>
+                                                                                              <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                                                  <small class="">Select Pack Price Type</small>
+                                                                                              </div> -->
+                                                                                    <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+
+                                                                                    <div class="me-helper-text left animated zoomIn">
+                                                                                        <small class="">
+                                                                                                       <i class="fas fa-info-circle fa-fw"></i>Step1: Pack Type</small>
+                                                                                    </div>
+                                                                                    <!-- *********************  form validation  messages ********************* -->
+
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                                                <div class="input-field col s12">
+                                                                                    <input class="validate" placeholder="Click or type to select" ngui-auto-complete [source]="showPackList" [(ngModel)]="selectedPackName" [ngModelOptions]="{standalone: true}" [value]="packname" #input1>
+                                                                                    <label for="Pack Name" class=" active me-form-input-label me-input-label">Step2: Pack Name</label>
+                                                                                    <!-- *********************  form validation  messages ********************* -->
+                                                                                    <div class="me-helper-text left animated zoomIn">
+                                                                                        <small class="">
+                                                                                                 <i class="fas fa-info-circle fa-fw"></i>Step2: Enter Pack Name</small>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                                                <a class="btn left  flow-text waves-effect waves-light me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" id="addSubscription" (click)=" AddPack();">Add Pack
+                                                                                        <i class="fa fa-plus-circle fa-fw"></i>
+                                                                                        </a>
+                                                                            </div>
+
+                                                                            <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn ml-2 pl-2 pr-2" *ngIf="showAlertMessage">
+                                                                                <div class="me-alert-card-content orange-text">
+                                                                                    <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong> Base Pack is already selected, remove to add </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn ml-2 pl-2 pr-2" *ngIf="hasPack">
+                                                                                <div class="me-alert-card-content orange-text">
+                                                                                    <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong  >{{this.pack_obj_exist.pack_name}} is already added!</p>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn ml-2 pl-2 pr-2" *ngIf="requirePack">
+                                                                                <div class="me-alert-card-content orange-text">
+                                                                                    <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong  > Choose atleast one basepack!</p>
+                                                                            </div>
+                                                                        </div>
+
+                                                                            </div>
+                                                                                                                                                       <!-- Pack#Row#02 -->
+                                                                            <!-- Pack#Row#02 End -->
+
+                                                                            <div class="divider"></div>
+                                                                             <!-- Pack table#Row#03 start -->
+                                                                            <div class="row">
+                                                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                                                                    <table class="highlight responsive-table">
+                                                                                        <thead>
+                                                                                            <tr class="grey lighten-2 pt-1 pb-1">
+                                                                                                <th class="center-align fnt-sz-075">#</th>
+                                                                                                <th class="fnt-sz-075">Pack Name</th>
+                                                                                                <th class="fnt-sz-075">Pack Type</th>
+                                                                                                <th class="fnt-sz-075 right-align">Base Amount</th>
+                                                                                                <th class="fnt-sz-075 right-align">Total Tax</th>
+                                                                                                <th class="fnt-sz-075 right-align">Total Rent</th>
+                                                                                                <th class="fnt-sz-075 center-align">Action</th>
+                                                                                            </tr>
+                                                                                        </thead>
+
+                                                                                        <tbody>
+
+                                                                                            <tr class="pt-1 pb-1" *ngFor="let sub of tempSubscriptionPackList let i=index">
+                                                                                                <td class="center-align pt-1 pb-1 fnt-sz-075">{{i+1}}</td>
+                                                                                                <td class="pt-1 pb-1 fnt-sz-075">{{sub.pack_name}}</td>
+                                                                                                <td class="pt-1 pb-1 fnt-sz-075">
+                                                                                                    <span *ngIf="sub.pack_type == 'BSPK'">Base Pack</span>
+                                                                                                    <span *ngIf="sub.pack_type == 'ADDN'">Addon Pack</span>
+                                                                                                    <span *ngIf="sub.pack_type == 'CHNL'">Channel</span>
+                                                                                                </td>
+                                                                                                <td class="pt-1 pb-1 fnt-sz-075 right-align">{{sub.base_price| number:'1.2-2'}}</td>
+                                                                                                <td class="pt-1 pb-1 fnt-sz-075 right-align">{{sub.total_tax| number:'1.2-2'}}</td>
+                                                                                                <td class="pt-1 pb-1 fnt-sz-075 right-align">{{sub.total_amount| number:'1.2-2'}}</td>
+                                                                                                <td class="center-align pt-1 pb-1 fnt-sz-075">
+                                                                                                    <a class="hoverable " style="color:rgb(255, 0, 0)" (click)="removePack(sub.pack_id,i,sub.pack_type)">
+                                                                                                        <i class="fas fa-trash-alt fa-lg"></i>
+                                                                                                    </a>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr *ngIf="showNoRecordsPack">
+                                                                                                <td colspan="7">
+                                                                                                    <div class="center-align">
+                                                                                                        <span class="me-status-chip red lighten-1">No Records</span>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+
+                                                                                </div>
+                                                                            </div>
+                                                                                                                                                         <!-- Pack table#Row#03 start -->
+                                                                             <!-- Pack table#Row#03 End -->
+
+                                                                        </div>
+
+                                                                        
+                                                                    <!-- STB#Row Card #01 Start -->
+                                                                        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 pr-3">
+                                                                            <div class="card grey lighten-4">
+                                                                                <!-- STB#Row#01 -->
+                                                                                <div class="row grey m-0 p-0 lighten-2">
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <h6 class="">Settop Box Details</h6>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- STB#Row#02 -->
+                                                                                <div class="row mb-1">
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <div class=" input-field col s6">
+                                                                                            <input id="stb_number" type="text"  [formControl]="subscription_details.controls['stb_number']" class="validate">
+                                                                                            <label for="stb_number" class="me-form-input-label me-input-label active required">SetTop Box #</label>
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                            
+                                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!stb_number.valid && !stb_number.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-info-circle fa-fw"></i>Enter SetTop Box #</small>
+
+                                                                                            </div>
+                                                                                            <div class="me-required-text left animated zoomIn" *ngIf="this.showSTBNumberExist">
+                                                                                                <small class="">
+                                                <i class="fas fa-exclamation-triangle fa-fw"></i>STB Number Already Exist</small>
+                                                                                            </div>
+                                                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                        </div>
+                                                                                        <div class=" input-field col s6">
+                                                                                            <input id="stb_vc_number" type="text" required [formControl]="subscription_details.controls['stb_vc_number']" class="validate">
+                                                                                            <label for="stb_vc_number" class="me-form-input-label me-input-label active required">VC Number #</label>
+
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                            <div class="me-required-text left animated zoomIn" *ngIf="stb_vc_number.hasError('required')  && stb_vc_number.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                            </div>
+                                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!stb_vc_number.valid && !stb_vc_number.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-info-circle fa-fw"></i>Enter VC Number #
+                                              </small>
+                                                                                            </div>
+                                                                                            <div class="me-required-text left animated zoomIn" *ngIf="this.showVCNumberExist">
+                                                                                                <small class="">
+                                                <i class="fas fa-exclamation-triangle fa-fw"></i>VC Number Already Exist</small>
+                                                                                            </div>
+                                                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- STB#Row#03 -->
+                                                                                <div class="row mb-1">
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <div class=" input-field col s6">
+                                                                                            <select id="serviceStatus" class="validate" required [formControl]="subscription_details.controls['service_status']">
+                                              <option value="" disabled>Choose your option</option>
+                                              <option value="ACTIVE" selected>Active</option>
+                                              <option value="SUSPENDED">Suspended</option>
+                                              <option value="DISCONNECTED">Disconnected</option>
+                                              <option value="FREEBOX">Free Box</option>
+
+                                            </select>
+                                                                                            <label class="me-form-input-label ">
+                                              <small>Service Status</small>
+                                            </label>
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                            <div class="me-required-text left animated zoomIn" *ngIf="service_status.hasError('required')  && service_status.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                            </div>
+                                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!service_status.valid && !service_status.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-info-circle fa-fw"></i>Enter Service Status
+                                              </small>
+
+                                                                                            </div>
+                                                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+
+                                                                                        </div>
+                                                                                        <div class=" input-field col s6">
+                                                                                            <!-- <input id="stb_activation_date" type="date" [formControl]="subscription_details.controls[ 'stb_activation_date']" required class="validate"> -->
+                                                                                            <label for="stb_activation_date" class="me-form-input-label me-input-label active required">Activation Date</label>
+                                                                                            <input matInput [matDatepicker]="picker1" readonly  [min]="this.minDate" [max]="this.maxDate" [formControl]="subscription_details.controls[ 'stb_activation_date']" style="width:74%">
+                                                                                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                                                                            <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                            <div class="me-required-text left animated zoomIn" *ngIf="stb_activation_date.hasError('required')  && stb_activation_date.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                            </div>
+                                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!stb_activation_date.valid && !stb_activation_date.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-info-circle fa-fw"></i>Enter Activation Date
+                                              </small>
+
+                                                                                            </div>
+
+                                                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- STB#Row#04 -->
+                                                                                <div class="row mb-1">
+                                                                                    <div class=" col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        <div class=" input-field col s6 ">
+                                                                                            <input id="stb_serial_number" type="text" [formControl]="subscription_details.controls['stb_serial_number']" class="validate">
+                                                                                            <label for="stb_serial_number" class="me-form-input-label me-input-label active required">STB Serial Number</label>
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                            <div class="me-required-text left animated zoomIn" *ngIf="stb_serial_number.hasError('required')  && stb_serial_number.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                            </div>
+                                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!stb_serial_number.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-info-circle fa-fw"></i>Enter STB Serial Number
+                                              </small>
+
+                                                                                            </div>
+                                                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                        </div>
+                                                                                        <div class=" input-field col s6">
+                                                                                            <input id="stb_model_number" type="text" [formControl]="subscription_details.controls['stb_model_number']" class="validate">
+                                                                                            <label for="stb_model_number" class="me-form-input-label me-input-label active required">STB Model</label>
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                            <div class="me-required-text left animated zoomIn" *ngIf="stb_model_number.hasError('required')  && stb_model_number.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                                            </div>
+                                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!stb_model_number.touched">
+                                                                                                <small class="">
+                                                <i class="fas fa-info-circle fa-fw"></i>Enter STB Model
+                                              </small>
+
+                                                                                            </div>
+                                                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                                            <!-- *********************  form validation  messages ********************* -->
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>                                  
+                                                                    <!-- STB#Row Card #01 Start -->
+                                                                    </div>
+
+                                                                </div>
+                                                                <!-- Subscription Modal Content - End -->
+                                                                <div class="modal-footer cg-modal-footer">
+                                                                        <a class=" modal-action modal-close btn waves-effect waves-light me-gradient-45deg-light-red-darkred z-depth-2 hoverable">Close
+                                                                        <i class="fa fa-ban fa-fw"></i>
+                                                                        </a>
+                                                                        <a *ngIf="LabelFlag=='Add'" class=" modal-action  btn waves-effect waves-light me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" (click)="AddSubscription(subscription_details.value);">Save
+                                                                        <i class="fa fa-save fa-fw"></i>
+                                                                        </a>
+                                                                        <a *ngIf="LabelFlag=='Edit'" class=" modal-action  btn waves-effect waves-light me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" (click)="EditAddSubscription(subscription_details.value);">Save
+                                                                        <i class="fa fa-save fa-fw"></i>
+                                                                        </a>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Subscription Modal Structure  - End -->
+                                                        </section>
+                                                        <!-- Subscription - Modal ~ End -->
+                                                    </div>
+                                                    <div class="row m-0 p-0">
+                                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 m-0 p-0">
+                                                            <td-data-table #dataTable [data]="filteredData" [columns]="columns" [sortable]="true" [sortBy]="sortBy" [clickable]="true" [(ngModel)]="selectedRows" [sortOrder]="sortOrder" (sortChange)="sort($event)" (rowClick)="updateSubscription($event)" [ngModelOptions]="{standalone: true}">
+                                                               
+                                                                <ng-template tdDataTableTemplate="service_status" let-value="value">
+                                                                    <span *ngIf="value == 'ACTIVE'" class="me-status-chip green lighten-4 green-text right-align">Active</span>
+                                                                    <span *ngIf="value == 'SUSPENDED'" class="me-status-chip orange lighten-4 orange-text right-align">SUSPENDED</span>
+                                                                    <span *ngIf="value == 'DISCONNECTED'" class="me-status-chip red lighten-4 red-text right-align">DISCONNECTED</span>
+                                                                    <span *ngIf="value == 'FREEBOX'" class="me-status-chip blue lighten-4 blue-text right-align">FREE BOX</span>
+
+                                                                </ng-template>
+                                                               
+                                                                <ng-template tdDataTableTemplate="rownum" let-value="value">
+                                                                    <a href="#modal-subscription" (click)="updateSubscription(value);" class="modal-trigger">
+                                                                        <strong>
+                                    <i class="fas fa-edit fa-fw"></i> Edit</strong>
+                                                                                        </a>
+                                                                                        </ng-template>
+                                                                                        </td-data-table>
+                                                                                        <div class="center mt-2" *ngIf="this.showNoRecords">
+                                                                                            <span class="me-status-chip red lighten-1">No Records</span>
+                                                                                        </div>
+
+                                                                                        <td-paging-bar #pagingBar [pageSize]="pageSize" [total]="filteredTotal" (change)="page($event)">
+                                                                                            <span hide-xs>Rows per page:</span>
+                                                                                            <mat-select [style.width.px]="50" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}">
+                                                                                                <mat-option *ngFor="let size of [50,100,200]" [value]="size">
+                                                                                                    {{size}}
+                                                                                                </mat-option>
+                                                                                            </mat-select>
+                                                                                            {{pagingBar.range}}
+                                                                                            <span hide-xs>of {{pagingBar.total}}</span>
+                                                                                        </td-paging-bar>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- subscription Summary card start ---->
+
+                                                                            <section id="suscriptionSummary">
+                                                                                <div class="row m-0 p-0 me-border-bottom grey lighten-4 middle-xs">
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                                                        <h6 class="pl-1 pb-2  secondaryTextColor font-weight-500">
+                                                                                            <i class="fas fa-circle fa-xs  fnt-sz-050 pr-1 orange-text text-lighten-3" style="vertical-align: 40%;"></i>Subscription Summary </h6>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <!-- <div class="divider"></div>
+                                                                                            <br> -->
+
+                                                                                <div class="row m-1 mt-2 mb-2">
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12  ">
+                                                                                        <!-- <h6 class="cg-cardRibbon"> Summary</h6> -->
+                                                                                        <div class="row m-0">
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-0 grey lighten-4">
+                                                                                                <p class="center white-text cg-category orange m-0">
+                                                                                                    <span> RENT TOTAL </span>
+                                                                                                </p>
+
+                                                                                                <h5 class="right blue-grey-text pr-5">
+                                                                                                    <i class="fa fa-rupee fa-fw" aria-hidden="true"></i>{{this.summeryRentTotal}} </h5>
+                                                                                                <small class="grey-text pl-5">active only</small>
+
+                                                                                            </div>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-0 grey lighten-3">
+                                                                                                <p class="center white-text cg-category orange m-0">
+                                                                                                    <span> TAX TOTAL</span>
+                                                                                                </p>
+                                                                                                <h5 class="right blue-grey-text pr-5">
+                                                                                                    <i class="fa fa-rupee fa-fw" aria-hidden="true"></i>{{this.summeryTaxTotal}}</h5>
+                                                                                                <small class="grey-text pl-5">active only</small>
+                                                                                            </div>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-0 grey lighten-2">
+                                                                                                <p class="center white-text cg-category orange m-0">
+                                                                                                    <span>BILL TOTAL</span>
+                                                                                                </p>
+                                                                                                <h5 class="right blue-grey-text pr-5">
+                                                                                                    <i class="fa fa-rupee fa-fw" aria-hidden="true"></i>{{this.summeryBillTotal}}</h5>
+                                                                                                <small class="grey-text pl-5">active only</small>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row m-1">
+
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " id="stbSummary">
+                                                                                        <!-- <h6 class="cg-cardRibbon">STB Summary</h6> -->
+                                                                                        <div class="row m-0">
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 grey lighten-4 p-0">
+                                                                                                <p class="center white-text cg-category green lighten-2 m-0">
+                                                                                                    <span>Active</span>
+                                                                                                </p>
+                                                                                                <h5 class="right blue-grey-text pr-5">{{this.summeryActive}}</h5>
+                                                                                            </div>
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 grey lighten-3 p-0">
+                                                                                                <p class="center white-text cg-category orange lighten-2 m-0">
+                                                                                                    <span>Suspended</span>
+                                                                                                </p>
+                                                                                                <h5 class="right blue-grey-text pr-5">{{this.summerySuspended}}</h5>
+                                                                                            </div>
+
+
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 grey lighten-2 p-0">
+                                                                                                <p class="center white-text cg-category red lighten-2 m-0">
+                                                                                                    <span>Disconnected</span>
+                                                                                                </p>
+                                                                                                <h5 class="right blue-grey-text pr-5">{{this.summeryDisconnected}}</h5>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 grey lighten-1 p-0">
+                                                                                                <p class="center white-text cg-category blue lighten-2 m-0">
+                                                                                                    <span>Free Box</span>
+                                                                                                </p>
+                                                                                                <h5 class="right blue-grey-text pr-5">{{this.summeryFreeBox}}</h5>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 grey lighten-2 p-0">
+                                                                                                <p class="center white-text cg-category orange m-0">
+                                                                                                    <span>Total</span>
+                                                                                                </p>
+                                                                                                <h5 class="right blue-grey-text pr-5">{{this.summeryBoxTotal}}</h5>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </section>
+
+                                                                            <!-- subscription Summary card End ---->
+
+                                                    </section>
+                                                    <!-- Add Subscription Details  ~ End -->
+
+                                                    <!-- Add Payment Details  ~ Start -->
+                                                    <section id="payment">
+                                                        <div class="row m-0 p-0 me-border-bottom grey lighten-4 ">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <h6 class="pb-1 secondaryTextColor ">
+                                                                    <strong>
+                                <i class="fas fa-circle fa-xs  fnt-sz-050 orange-text text-lighten-3" style="vertical-align: 40%;"></i> Add Payments</strong>
+                                                                </h6>
+                                                            </div>
+                                                        </div>
+                                                        <!-- <p #myElem>Scrol Here</p> -->
+                                                        <div class="row mt-2">
+                                                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                                <div class=" input-field col s12">
+                                                                    <select id="paymenttype" [formControl]="paymentDetails.controls['payment_type']">
+                                <option value="" disabled selected>Choose Option </option>
+                                <!-- <option value="INSTLL">Installation Fee</option> -->
+                                <option value="ADDCHRG">Add Charges</option>
+                              </select>
+                                                                    <label class="me-form-input-label" for="paymenttype">
+                                <small>Step1: Payment Type</small>
+                              </label>
+
+                                                                    <!-- *********************  form validation  messages ********************* -->
+                                                                    <!-- <div class="me-required-text left animated zoomIn" *ngIf="pack_price_type.hasError('required')  && pack_price_type.touched">
+                                                                                          <small class="">
+                                                                  <i class="fa fa-warning fa-fw"></i>Required</small>
+                                                                                      </div>
+                                                                                      <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                                          <small class="">Select Pack Price Type</small>
+                                                                                      </div> -->
+                                                                    <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+
+                                                                    <div class="me-helper-text left animated zoomIn">
+                                                                        <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Step1: Select Payment Type</small>
+                                                                    </div>
+                                                                    <!-- *********************  form validation  messages ********************* -->
+
+
+                                                                </div>
+
+
+
+
+                                                            </div>
+
+                                                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                                <div class=" input-field col s12">
+                                                                    <input id="payment_amount" type="text" class="validate" placeholder="Enter Amount" required app-restrict-input="amount" [formControl]="paymentDetails.controls['payment_amount']">
+                                                                    <label for="payment_amount" class="me-form-input-label me-input-label">Step2: Payment Amount</label>
+                                                                    <!-- *********************  form validation  messages ********************* -->
+
+                                                                    <!-- *********************  form validation  messages ********************* -->
+                                                                    <div class="me-required-text left animated zoomIn" *ngIf="payment_amount.hasError('required')  && payment_amount.touched">
+                                                                        <small class="">
+                                  <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                    </div>
+                                                                    <div class="me-helper-text left animated zoomIn" *ngIf="!payment_amount.valid && !payment_amount.touched">
+                                                                        <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Step2: Enter Payment Amount</small>
+                                                                    </div>
+                                                                    <!-- <div class="green-text left" style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                                    <!-- *********************  form validation  messages ********************* -->
+
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                                <div class=" input-field col s12">
+                                                                    <input id="payment_remarks" type="text" class="validate" placeholder="Enter Remarks" [formControl]="paymentDetails.controls['payment_remarks']" maxlength="30">
+                                                                    <label for="payment_remarks" class="me-form-input-label me-input-label">Step3: Payment Remarks</label>
+                                                                    <!-- *********************  form validation  messages ********************* -->
+
+                                                                    <div class="me-helper-text left animated zoomIn">
+                                                                        <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Step3: Enter Payment Remarks</small>
+                                                                    </div>
+                                                                    <!-- *********************  form validation  messages ********************* -->
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                                                                <a class="btn flow-text waves-effect waves-light me-gradient-45deg-light-blue-cyan z-depth-2 hoverable primaryTextColor z-depth-3" id="addPaymentButton" (click)="AddPayment()">
+                              Add
+                              <i class="fas fa-plus-circle fa-sm primaryTextColor"></i>
+                            </a>
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn " *ngIf="hasPayment">
+                                                                    <div class="me-alert-card-content orange-text">
+                                                                        <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong> {{this.LabelPaymentType}} is already selected, remove to add </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="divider"></div>
+
+                                                        <div class="row middle-xs center-xs mt-2">
+                                                            <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+                                                                <table class="z-depth-1">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="center-align">Row#</th>
+                                                                            <th>Payment Type</th>
+                                                                            <th>Amount</th>
+                                                                            <th>Remarks</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+
+                                                                    <tbody>
+                                                                        <tr *ngIf="showNoRecordsPayments">
+                                                                            <td colspan="4">
+                                                                                <div class="center-align">
+                                                                                    <span class="me-status-chip red lighten-1">No Records</span>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr *ngFor="let payment of payment_details let i=index ">
+                                                                            <td class="center-align">{{i+1}}</td>
+                                                                            <td><span *ngIf="payment.payment_type == 'INSTLL'">Installation Fee</span>
+                                                                                <span *ngIf="payment.payment_type == 'OPNBAL'">Opening Balance</span>
+                                                                                <span *ngIf="payment.payment_type == 'ADDCHRG'">Add Charges</span></td>
+                                                                            <td>{{payment.payment_amount| number : '1.2-2'}}</td>
+                                                                            <td>{{payment.payment_remarks}}</td>
+                                                                            <td class="left-align pt-1 pb-1 fnt-sz-075">
+                                                                                <a class="hoverable " style="color:rgb(255, 0, 0)" (click)="removePayment(i)">
+                                                                                    <i class="fas fa-trash-alt fa-lg"></i>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </section>
+                                                    <!-- Add Payment Details  ~ End -->
+
+                                                    <!-- *************************** Submit Row ***************************   -->
+                                                    <section class="mt-2 pr-2 pb-2">
+                                                        <!-- row#2 -- End -->
+                                                        <div class="divider me-divider-color mb-1"></div>
+
+                                                        <!-- form -submit row - Start -->
+                                                        <div class="row end-lg end-sm center-xs end-md">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <a [routerLink]="[ '/customerreport']" class="btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2 hoverable" name="cancel"> Cancel
+                             <i class="fas fa-times-circle fa-fw"></i>
+                           </a>
+                                                                <button class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" type="submit" name="submit" [ngClass]="{'animated wobble': IsformValid}" (mouseover)="IsformValid= (!customer_details.valid)" (mouseout)="IsformValid=false">Submit
+                             <i class="fas fa-check-circle fa-fw"></i>
+                           </button>
+                                                            </div>
+                                                        </div>
+                                                        <!-- form -submit row - end -->
+
+
+
+                                                    </section>
+
+                                                    <simple-notifications></simple-notifications>
+
+
+                                                    <!-- *************************** Submit Row ***************************   -->
+
+                                                    </div>
+                                                    </div>
+                                                    <!-- form section ~ End -->
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                    </form>
+                    </section>
+                    </div>
+        </main>
+        <!-- </div> -->
+        </div>
+        <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

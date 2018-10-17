@@ -1,0 +1,913 @@
+/*
+_________________________________________________________________________________________________
+## COMPONENT OBJECT FOR COLLECTION REPORT ##
+------------------------------------------------------------------------------------------------------------
+|   VERSION     |   1.0      |   CREATED_ON  |   19-MAR-2018 |   CREATED_BY  |   AKASH
+------------------------------------------------------------------------------------------------------------
+## COMPONENT FUNTIONALITY DETAILS 	##
+------------------------------------------------------------------------------------------------------------
+|   ++ HTTP Service for user profile retrieval
+|   ++ Get the data of all users for the owner
+|   ++ Render the Collection data in tabular format with ability to :-
+|      ** Ability to Filter by Area
+|      ** Ability to Filter by User
+|      ** Ability to Filter by Bill Type
+|      ** Ability to Filter by Custom Date Range.
+|   
+------------------------------------------------------------------------------------------------------------
+## CHANGE LOG DETAILS 				##
+------------------------------------------------------------------------------------------------------------
+|   ++ 19-MAR-2018    v1.0     - Created the New Component.
+|   ++
+____________________________________________________________________________________________________________
+
+*/
+
+// -- @details : Built and Custom Imports  #################################################################
+//  ~ Start ________________________________________________________________________________________________
+// Import Angular Core Libraries/Functionalities
+import { Component, OnInit, NgZone } from "@angular/core";
+import { ErrorStateMatcher } from "@angular/material/core";
+import { PersistenceService } from "angular-persistence";
+import { NgProgressModule, NgProgress } from "@ngx-progressbar/core";
+import { RouterModule, ActivatedRoute, Router } from "@angular/router";
+import { NgProgressRouterModule } from "@ngx-progressbar/router";
+import { IPageChangeEvent } from '@covalent/core/paging';
+import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn } from '@covalent/core/data-table';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl,
+  AbstractControl,
+  FormGroupDirective,
+  FormsModule,
+  ReactiveFormsModule,
+  NgForm
+} from "@angular/forms";
+import {
+  MatButtonModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatRippleModule,
+  MatSnackBarModule,
+  MatSortModule,
+  MatSnackBar,
+  MatAutocompleteModule
+} from "@angular/material";
+
+import { startWith  } from "rxjs/operators/startWith";
+import { map        } from "rxjs/operators/map";
+import { Observable } from "rxjs/Observable";
+import swal from "sweetalert2";
+
+// Import Custom Libraries/Functionalities/Services
+import { MeCallHttpGetService } from './../../../Service/me-call-http-get.service';
+import { MeUserProfileService } from './../../../Service/me-user-profile.service';
+import { StorageType } from './../../../Service/Interfaces/storage-type.enum';
+
+// Decimal Format for integer values displayed in tera datatable.
+const DECIMAL_FORMAT: (v: any) => any = (v: number) => v.toFixed(2);
+
+// below variables declared for Jquery and Material script
+// $ for jQuery functions and M for Material functions
+declare var jQuery: any;
+declare var $: any;
+declare var M: any;
+
+//  ~ End__________________________________________________________________________________________________
+
+
+@Component({
+  selector: 'app-me-collection-report',
+  templateUrl: './me-collection-report.component.html',
+  styleUrls: ['./me-collection-report.component.css']
+})
+export class MeCollectionReportComponent implements OnInit {
+  
+  // -- @details : Class variable declaration ################################################################
+  //  ~ Start_________________________________________________________________________________________________
+
+  //-- Create Form Group
+  reportFilter: FormGroup;
+
+  //-- Create List of Fields
+  area_name: AbstractControl;
+  user_name: AbstractControl;
+  toppings  : AbstractControl;
+  dateRange : AbstractControl;
+  fromDate  : AbstractControl;
+  toDate    : AbstractControl;
+
+
+  // Class Form variables
+  // All variables used in component template ( html file ) must be public
+  showLoader   : boolean = true;
+  showNoRecords: boolean = false;
+
+  // Class Local variables
+  // All variables used within the class must be private
+  private getRequestInput      : any   = "";
+  private _userProfileData     : any;
+  private _userLogin           : any;
+  private _collectionReportList: any[] = [];
+  private _areaList            : any   = [];
+  private _userList            : any   = [];
+  private reportValuesJSON: any      = null;
+  private area_id       : any;
+  private user_id       : any;
+  private reportDefaultObj  : any;
+  
+  userOptions  : any[] = [];
+  filteredAreas: Observable<any[]>;
+  filteredUsers: Observable<any[]>;
+  collectionReportList_obj : any[] = [];
+  
+
+  currentDate          : Date;
+  minDate              : Date;
+  maxDate              : Date;
+  sixMonths            : Date;
+  from_date_value      : Date;
+  to_date_value        : Date;
+  fromDate_value       : Date;
+  datePickerDisableFlag: boolean = true;
+  lastDayOfWeek        : any ;
+  firstDayOfWeek : any;
+
+  // Tera DataTable Local Fields
+  filteredData : any[]  = [];
+  filteredTotal: number = 0;
+
+  searchTerm  : string                  = '';
+  fromRow     : number                  = 1;
+  currentPage : number                  = 1;
+  pageSize    : number                  = 50;
+  sortBy      : string                  = 'bill_id';
+  selectedRows: any[]                   = [];
+  sortOrder   : TdDataTableSortingOrder = TdDataTableSortingOrder.Ascending;
+
+  // toppingList = [
+  //   "Fully Paid",
+  //   "Partially Paid",
+  //   "Unpaid"
+  // ];
+
+  dateRangeList = [
+    "Choose one",
+    "Today",
+    "Yesterday",
+    "This Week",
+    "Last Week",
+    "This Month",
+    "Last Month",
+    "Custom"
+  ];
+
+  private postRequestObject: any   = {
+    records: [
+      {
+        area_id  : "",
+        area_name: "",
+        user_name: "",
+        user_id  : "",
+        bill_type: "",
+        fromDate : "",
+        toDate   : "",
+        dateRange: "",
+        owner_id : "",
+      }
+    ]
+  };
+
+
+
+  // Tera DataTable Set Column name/Label and other features.
+  columns: ITdDataTableColumn[] = [
+    { name: 'bill_id', label: 'Bill Id',  filter: true,sortable: true,  },
+    { name: 'full_name', label: 'Customer Name',  filter: true,sortable: true,  },
+    { name: 'customer_phone', label: 'Phone',  filter: true ,sortable: false, },
+    { name: 'area_name', label: 'Area Name',  filter: true ,sortable: true, },
+    { name: 'previous_due', label: 'Prev Due.',  filter: true,sortable: true,numeric: true,format: DECIMAL_FORMAT  },
+    { name: 'rent_amount', label: 'Rent',  filter: true,sortable: true,numeric: true,format: DECIMAL_FORMAT  },
+    { name: 'cgst_total', label: 'CGST',  filter: true,sortable: false,numeric: true,format: DECIMAL_FORMAT  },
+    { name: 'sgst_total', label: 'SGST',  filter: true,sortable: false,numeric: true,format: DECIMAL_FORMAT  },
+    { name: 'tax_total', label: 'Total Tax',  filter: true,sortable: false,numeric: true,format: DECIMAL_FORMAT  },
+    { name: 'rent_total', label: 'Total Rent',  filter: true,sortable: true,numeric: true,format: DECIMAL_FORMAT  },
+    { name: 'collection_amount_original', label: 'Orig. Collection Amt ',  filter: true ,sortable: true, numeric: true, format: DECIMAL_FORMAT },
+    { name: 'collection_amount', label: 'Collection Amt',  filter: true, sortable: true, numeric: true, format: DECIMAL_FORMAT  },
+    { name: 'received_amount', label: 'Received Amt',  filter: true, sortable: true, numeric: true, format: DECIMAL_FORMAT  },
+    { name: 'outstanding_amount', label: 'Outstanding Amt',  filter: true, sortable: true, numeric: true, format: DECIMAL_FORMAT  },
+    { name: 'bill_status', label: 'Bill Status',  filter: true, sortable: true,  },
+    { name: 'user_name', label: 'Received By',  filter: true, sortable: true,  },
+    { name: 'received_date', label: 'Received Date',  filter: true, sortable: true,  } 
+  ];  
+
+  // function to open left side navgivation bar
+  _opened: boolean = false;
+ 
+
+  //  ~ End___________________________________________________________________________________________________
+
+  // --  @details :  constructor ##############################################################################
+  //  ~ Start - constructor____________________________________________________________________________________
+
+  constructor(
+    fb                            : FormBuilder,
+    public  callHttpGet           : MeCallHttpGetService,
+    public  userProfileService    : MeUserProfileService,
+    private areaPersistenceService: PersistenceService,
+    private _dataTableService     : TdDataTableService,
+    public  zone                  : NgZone
+  ) 
+  
+  {
+
+    /*
+      @details -  Intialize the form group with fields
+        ++ The fields are set to default values - in below case to - null.
+        ++ The fields are assigned validators
+            ** Required Validator
+    */
+
+    this.reportFilter = fb.group({
+      area_name: [""],
+      user_name: [""],
+      toppings  : [""],
+      dateRange : ["Today"],
+      fromDate  : [""],
+      toDate    : [""] 
+    });
+
+    this.currentDate = new Date();
+    this.sixMonths   = new Date();
+    this.sixMonths.setMonth(this.sixMonths.getMonth() - 6);
+    this.minDate     = this.sixMonths;
+    this.maxDate     = this.currentDate;
+    
+    // Controls are used in me-collection-report.component.html for accessing values and checking functionalities
+    this.area_name = this.reportFilter.controls["area_name"];
+    this.user_name = this.reportFilter.controls["user_name"];
+    this.toppings  = this.reportFilter.controls["toppings"];
+    this.dateRange = this.reportFilter.controls["dateRange"];
+    this.fromDate  = this.reportFilter.controls["fromDate"];
+    this.toDate    = this.reportFilter.controls["toDate"];
+
+    // Subscribe for Date Range changes
+    // ~ Start -- pack price changes ------------------------------------------------
+    this.dateRange.valueChanges.subscribe(
+      (value: string) => {
+        console.log('%c ------------------  Event Change Date Range ------------------','background: blue; color: white; display: block;');
+        
+        if(value == 'Custom') {
+          this.datePickerDisableFlag = false; 
+          console.log(this.datePickerDisableFlag);
+         
+          console.log(value);
+          this.reportFilter.controls['fromDate'].setValue(null);
+          this.reportFilter.controls['toDate'].setValue(null);
+
+          this.from_date_value = undefined;
+          this.to_date_value = undefined;
+ 
+        } 
+        else if(value == 'Today') {
+          console.log(value);
+          this.datePickerDisableFlag = true;
+          
+          this.from_date_value   = new Date();
+          this.to_date_value   = new Date();
+          // this.from_date_value.setHours(0, 0, 0);
+          // this.to_date_value.setHours(23, 59, 59);
+          this.reportFilter.controls['fromDate'].setValue(this.from_date_value);
+          this.reportFilter.controls['toDate'].setValue(this.to_date_value);
+  
+          console.log('fromDate',this.from_date_value.toISOString().split('T')[0]+' '+'00:00:00');
+          console.log('toDate',this.to_date_value.toISOString().split('T')[0]+' '+'23:59:59');
+
+        } 
+        else if(value == 'Yesterday') {
+
+          this.datePickerDisableFlag = true;
+
+          console.log(value);
+          this.from_date_value   = new Date();
+          this.to_date_value   = new Date();
+          this.from_date_value.setDate(this.from_date_value.getDate() - 1);
+          // this.from_date_value.setHours(0, 0, 0);
+          this.to_date_value.setDate(this.to_date_value.getDate() - 1);
+          // this.to_date_value.setHours(23, 59, 59);
+          this.reportFilter.controls['fromDate'].setValue(this.from_date_value);
+          this.reportFilter.controls['toDate'].setValue(this.to_date_value);
+          console.log('fromDate',this.from_date_value.toLocaleString());
+          console.log('toDate',this.to_date_value.toLocaleString());
+        } 
+        else if(value == 'This Week') {
+
+          this.datePickerDisableFlag = true;
+
+          console.log(value);
+          this.currentDate = new Date(); // get current date
+          this.firstDayOfWeek = this.currentDate.getDate() - this.currentDate.getDay(); //date of the month - the day of the week(To set a date object to the last Sunday).
+          this.lastDayOfWeek = this.firstDayOfWeek + 6; // Add 6 days to first day of the week(week <==> sunday(first day of week) to saturday(last day of week)).
+
+          this.from_date_value   = new Date(this.currentDate.setDate(this.firstDayOfWeek));
+          this.to_date_value   = new Date(this.currentDate.setDate(this.lastDayOfWeek));
+          // this.from_date_value.setHours(0, 0, 0);
+          // this.to_date_value.setHours(23, 59, 59);
+          this.reportFilter.controls['fromDate'].setValue(this.from_date_value);
+          this.reportFilter.controls['toDate'].setValue(this.to_date_value);
+          
+          // console.log('Date of the month',this.currentDate.getDate());
+          // console.log('Day of the week',this.currentDate.getDay());
+          console.log('first day',this.from_date_value.toLocaleString());
+          console.log('last day',this.to_date_value.toLocaleString());
+        } 
+        else if(value == 'Last Week') {
+
+          this.datePickerDisableFlag = true;
+
+          console.log(value);
+          this.currentDate = new Date(); // get current date
+          this.firstDayOfWeek = this.currentDate.getDate() - this.currentDate.getDay() - 7; //date of the month - the day of the week - 7(To set a date object to the last Sunday for lastweek).
+          this.lastDayOfWeek = this.firstDayOfWeek + 6; // Add 6 days to first day of the week(week <==> sunday(first day of week) to saturday(last day of week)).
+
+          this.from_date_value   = new Date(this.currentDate.setDate(this.firstDayOfWeek));
+          this.to_date_value   = new Date(this.currentDate.setDate(this.lastDayOfWeek));
+          // this.from_date_value.setHours(0, 0, 0);
+          // this.to_date_value.setHours(23, 59, 59);
+          this.reportFilter.controls['fromDate'].setValue(this.from_date_value);
+          this.reportFilter.controls['toDate'].setValue(this.to_date_value);
+          
+          // console.log('Date of the month',this.currentDate.getDate());
+          // console.log('Day of the week',this.currentDate.getDay());
+          console.log('start day of week',this.from_date_value.toLocaleString());
+          console.log('last day of week',this.to_date_value.toLocaleString());
+        } 
+        else if(value == 'This Month') {
+
+          this.datePickerDisableFlag = true;
+          
+          console.log(value);
+          this.currentDate = new Date(); // get current date
+        
+          // this.from_date_value   = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
+          // this.to_date_value   = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
+          this.from_date_value   = new Date();
+          this.to_date_value   = new Date();
+
+          var curmonth = this.currentDate.getMonth();
+          this.from_date_value.setMonth(curmonth);
+          this.from_date_value.setDate(1);
+
+          this.to_date_value.setMonth(curmonth + 1);
+          this.to_date_value.setDate(0);
+
+          this.reportFilter.controls['fromDate'].setValue(this.from_date_value);
+          this.reportFilter.controls['toDate'].setValue(this.to_date_value);
+          
+          console.log('start day of month',this.from_date_value.toISOString().split('T')[0]);
+          console.log('last day of month',this.to_date_value.toISOString().split('T')[0]);
+        } 
+        else if(value == 'Last Month') {
+
+          this.datePickerDisableFlag = true;
+          
+          console.log(value);
+          this.currentDate = new Date(); // get current date
+
+          this.from_date_value   = new Date();
+          this.to_date_value   = new Date();
+
+          this.from_date_value.setMonth(this.currentDate.getMonth() - 1); // set previous month
+          this.from_date_value.setDate(1); // set first date of previous month
+
+          this.to_date_value.setMonth(this.currentDate.getMonth()); // set previous month
+          this.to_date_value.setDate(0); // set last date of previous month
+    
+          this.reportFilter.controls['fromDate'].setValue(this.from_date_value);
+          this.reportFilter.controls['toDate'].setValue(this.to_date_value);
+          
+          console.log('start day of month',this.from_date_value.toISOString().split('T')[0]);
+          console.log('last day of month',this.to_date_value.toISOString().split('T')[0]);
+        } 
+        else if (value == 'Choose one') {
+          this.reportFilter.controls['fromDate'].setValue('');
+          this.reportFilter.controls['toDate'].setValue('');
+        }
+
+      }
+    );
+    // -~  End -------------------------------------------------------------------------
+
+
+    // Subscribe for Area changes to get area_id
+    // ~ Start -- Area_name changes ------------------------------------------------
+      this.area_name.valueChanges.subscribe((value: string) => {
+
+        for(let area in this._areaList) {
+
+          if(this._areaList[area].area_name === value) {
+            this.area_id = this._areaList[area].area_id;
+          }
+        }
+        console.log('area_id',this.area_id);
+      });
+    // ~End --------------------------------------------------------------------------
+
+
+    // Subscribe for user_name changes to get user_id
+    // ~ Start -- user_name changes ------------------------------------------------
+      this.user_name.valueChanges.subscribe((value: string) => {
+        
+        for(let user in this._userList) {
+
+          if(this._userList[user].user_name === value) {
+            this.user_id = this._userList[user].user_id;
+          }
+        }
+        console.log('user_id',this.user_id);
+      });
+    // ~End --------------------------------------------------------------------------
+
+  }
+  //  ~ End - constructor_____________________________________________________________________________________
+
+  // --  @details :  ngOnInit ###############################################################################
+  //  ~ Start - ngOnInit_____________________________________________________________________________________
+  ngOnInit(): void {
+
+    this.filter();
+
+     //initialize loader
+     this.showLoader    = true;
+     this.showNoRecords = false;
+
+
+     // initialize and execute jquery document ready
+    this.zone.run(() => {
+      // https://stackoverflow.com/questions/44919905/how-to-invoke-a-function-within-document-ready-in-angular-4
+      // https://angular.io/api/core/NgZone
+
+      $(document).ready(function() {
+        $("select").select();
+       
+        $("input#input_text, textarea#textarea2").characterCounter();
+
+        // intialize input label
+        M.updateTextFields();
+        
+      });
+    });
+
+    // Fetch the User Login Details Stored in the Cache
+    this._userLogin = this.areaPersistenceService.get(
+      "userLogin",
+      StorageType.SESSION
+    );
+    
+    // make call to get user profile details
+    //  ~ Start  --------------------------------------------------------------------------------- 
+    this.userProfileService.makeRequest_UserProfile(this._userLogin).subscribe(response => {
+        //assign user profile data from the response
+         this._userProfileData = response;
+
+        // Log Response - Remove Later
+        console.warn(
+          "%c ___________________________ UserProfile Response ___________________________",
+          "background: #4dd0e1;color: black; font-weight: bold;"
+        );
+        console.log(this._userProfileData);
+
+        // get the Input JSON format for making http request.
+        this.getRequestInput = this.callHttpGet.createGetRequestRecord(
+          this._userProfileData.ownerDetails
+        );
+
+        console.log(
+          "%c  Request Input : >>> ",
+          "color: green; font-weight: bold;",
+          this.getRequestInput
+        );
+
+        // make call for retrieving Area List  
+        //  ~ Start  -------------------------------------------------------------------------------------------------
+          this.callHttpGet.makeRequest_GetArea(this.getRequestInput).subscribe(response => {
+            // Log Response - Remove Later
+            console.warn(
+              "%c ___________________________ Area Response ___________________________",
+              "background: #4dd0e1;color: black; font-weight: bold;"
+            );
+
+            console.log("Area Length : ", response.areaList.length);
+            console.log(response.areaList);
+
+            this._areaList = response.areaList;
+
+          });
+        //  ~ End ________________________________________________________________________________________
+
+        // make call for retrieving User List
+        //  ~ Start  -----------------------------------------------------------------------------------------
+
+        this.callHttpGet.makeRequest_ManageUser(this.getRequestInput).subscribe(response => {
+          // Log Response - Remove Later
+          console.warn(
+            "%c ___________________________ Manage User Response ___________________________",
+            "background: #9fa8da;color: black; font-weight: bold;"
+          );
+
+          console.log(response.usersList);
+          console.log("User Length : ", response.usersList.length);
+
+          this._userList = response.usersList;
+
+        });
+
+      //  ~ End  ---------------------------------------------------------------------------------------------
+
+        // ~ Assigning datepicker values as default today's date -----------------------------------------------
+          this.datePickerDisableFlag = true;
+          
+          this.from_date_value   = new Date();
+          this.to_date_value   = new Date();
+          // this.from_date_value.setHours(0, 0, 0);
+          // this.to_date_value.setHours(23, 59, 59);
+          this.reportFilter.controls['fromDate'].setValue(this.from_date_value);
+          this.reportFilter.controls['toDate'].setValue(this.to_date_value);
+
+          console.log('fromDate',this.from_date_value.toISOString().split('T')[0]+' '+'00:00:00');
+          console.log('toDate',this.to_date_value.toISOString().split('T')[0]+' '+'23:59:59');
+
+                 
+        this.reportDefaultObj = {"fromDate":this.from_date_value.toISOString().split('T')[0]+' '+'00:00:00',"toDate":this.to_date_value.toISOString().split('T')[0]+' '+'23:59:59',"owner_id":this._userProfileData.ownerDetails.owner_id};
+        // get the Input JSON format for making http request.
+        this.getRequestInput = this.callHttpGet.createGetRequestRecord(
+          this.reportDefaultObj
+        );
+
+        console.warn(
+          "%c ___________________________ Manage User Response ___________________________",
+          "background: #9fa8da;color: black; font-weight: bold;"
+        );
+
+        console.log('default object is:',this.getRequestInput);
+      
+        // make call for getCollectionReport 
+        //  ~ Start  ----------------------------------------------------------------------------------
+        this.callHttpGet.makeRequest_getCollectionReport(this.getRequestInput).subscribe(response => {
+            // Log Response - Remove Later
+            console.warn(
+              "%c ___________________________ getCollectionReport Response ___________________________",
+              "background: #4dd0e1;color: black; font-weight: bold;"
+            );
+
+            console.log(response.collectionReport);
+
+            this._collectionReportList    = response.collectionReport;
+
+            this.collectionReportList_obj = this._collectionReportList;
+          
+            if (this._collectionReportList.length > 0) {
+              this.showLoader = false;
+              
+              this.filteredData  = this.collectionReportList_obj;
+              this.filteredTotal = this.collectionReportList_obj.length;
+              this.filter();
+            } else {
+              this.showLoader    = false;
+              this.showNoRecords = true;
+            }
+          });
+
+        // ~ End  -----------------------------------------------------------------------------------------
+      });
+
+  }
+  //  ~ End - ngOnInit_____________________________________________________________________________________
+
+  // --  @details :  onSubmit ##################################################################################
+  //  ~ Start -onSubmit ________________________________________________________________________________________
+  
+    onSubmit(value: string): void {
+
+      // Show Loader
+      this.showLoader    = true;
+      this.showNoRecords = false;
+
+      console.log(
+        "%c Form Submitted Values ***** ----------------------------------------------------------------------- ",
+        "background: #689f38;font-weight: bold;color: white; "
+      );
+      console.log(value);
+      
+      //create JSON
+      this.reportValuesJSON = JSON.parse(JSON.stringify(value));
+      console.log("--------------- JSON Value ---------------");
+      console.log(this.reportValuesJSON);
+
+      // Assign Values from values to post request object
+      this.postRequestObject.records[0].area_name = this.reportValuesJSON.area_name;
+      this.postRequestObject.records[0].area_id   = this.area_id;
+      this.postRequestObject.records[0].user_id   = this.user_id;
+      this.postRequestObject.records[0].user_name = this.reportValuesJSON.user_name;
+      this.postRequestObject.records[0].bill_type = this.reportValuesJSON.toppings;
+      this.postRequestObject.records[0].dateRange = this.reportValuesJSON.dateRange;
+      this.postRequestObject.records[0].owner_id  = this._userProfileData.ownerDetails.owner_id;
+      // this.postRequestObject.records[0].source_type  = 'CRM';
+
+      // this.postRequestObject.records[0].fromDate = this.from_date_value.toLocaleString();
+      // this.postRequestObject.records[0].toDate   = this.to_date_value.toLocaleString();
+
+      
+      if(this.reportFilter.controls['fromDate'].value != '' && this.reportFilter.controls['toDate'].value != '') {
+        console.log('condition=====: 1');
+        if( this.reportValuesJSON.fromDate === null &&  this.reportValuesJSON.toDate === null) {
+          console.log('if null');
+          this.postRequestObject.records[0].fromDate = null;
+          this.postRequestObject.records[0].toDate   = null;
+          console.log('this.formValuesJSON.fromDate is null');
+        }
+        else if( this.from_date_value === undefined &&  this.to_date_value === undefined) {
+          
+          console.log('condition=====: 2');
+          //  In case of Custom Date Range comes here
+          this.from_date_value = new Date(this.reportValuesJSON.fromDate);
+          this.to_date_value = new Date(this.reportValuesJSON.toDate);
+
+          let from_date_array = this.from_date_value.toLocaleString('en-US',{hour12:false}).split(" ");
+
+          let custom_fromDate = from_date_array[0].split('/');
+
+        // We then parse  the mdy into parts
+          let custom_from_month = parseInt(custom_fromDate[0]);
+          let custom_from_day = parseInt(custom_fromDate[1]);
+          let custom_from_year = parseInt(custom_fromDate[2]);
+          
+          // Putting it all together
+          var from_formattedDate = custom_from_year + '-' + custom_from_month + '-' + custom_from_day;
+          
+          this.postRequestObject.records[0].fromDate = from_formattedDate+' '+'00:00:00';
+
+          
+
+        // Parse our locale string to [date, time]
+          var date = new Date().toLocaleString('en-US',{hour12:false}).split(" ");
+          let to_date_array = this.to_date_value.toLocaleString('en-US',{hour12:false}).split(" ");
+
+          let custom_toDate = to_date_array[0].split('/');
+
+        // We then parse  the mdy into parts
+          let custom_to_month = parseInt(custom_toDate[0]);
+          let custom_to_day = parseInt(custom_toDate[1]);
+          let custom_to_year = parseInt(custom_toDate[2]);
+          
+          // Putting it all together
+          var to_formattedDate = custom_to_year + '-' + custom_to_month + '-' + custom_to_day;
+        
+          this.postRequestObject.records[0].toDate = to_formattedDate+' '+'23:59:59';
+      
+        }
+
+        else {
+          console.log('condition=====: 3');
+
+          if( this.from_date_value !== undefined &&  this.to_date_value !== undefined ) {
+            
+            console.log('condition=====: 4');
+            //  In case of Custom Date Range comes here
+            this.from_date_value = new Date(this.reportValuesJSON.fromDate);
+            this.to_date_value = new Date(this.reportValuesJSON.toDate);
+  
+            let from_date_array = this.from_date_value.toLocaleString('en-US',{hour12:false}).split(" ");
+  
+            let custom_fromDate = from_date_array[0].split('/');
+  
+          // We then parse  the mdy into parts
+            let custom_from_month = parseInt(custom_fromDate[0]);
+            let custom_from_day = parseInt(custom_fromDate[1]);
+            let custom_from_year = parseInt(custom_fromDate[2]);
+            
+            // Putting it all together
+            var from_formattedDate = custom_from_year + '-' + custom_from_month + '-' + custom_from_day;
+            
+            this.postRequestObject.records[0].fromDate = from_formattedDate+' '+'00:00:00';
+  
+            
+  
+          // Parse our locale string to [date, time]
+            var date = new Date().toLocaleString('en-US',{hour12:false}).split(" ");
+            let to_date_array = this.to_date_value.toLocaleString('en-US',{hour12:false}).split(" ");
+  
+            let custom_toDate = to_date_array[0].split('/');
+  
+          // We then parse  the mdy into parts
+            let custom_to_month = parseInt(custom_toDate[0]);
+            let custom_to_day = parseInt(custom_toDate[1]);
+            let custom_to_year = parseInt(custom_toDate[2]);
+            
+            // Putting it all together
+            var to_formattedDate = custom_to_year + '-' + custom_to_month + '-' + custom_to_day;
+          
+            this.postRequestObject.records[0].toDate = to_formattedDate+' '+'23:59:59';
+        
+          }
+          else 
+          {
+            console.log('condition=====: 5');
+            this.postRequestObject.records[0].fromDate = this.from_date_value.toISOString().split('T')[0]+' '+'00:00:00';
+            this.postRequestObject.records[0].toDate   = this.to_date_value.toISOString().split('T')[0]+' '+'23:59:59';
+          }
+        }
+      } 
+      else {
+        console.log('condition=====: 6');
+        this.postRequestObject.records[0].fromDate = "";
+        this.postRequestObject.records[0].toDate   = "";
+      }
+      console.log(
+        "%c Post Request Object ***** -------------------------------------------------------------------------- ",
+        "background: #8bc34a;font-weight: bold;color: white; "
+      );
+      console.log(JSON.stringify(this.postRequestObject));
+
+      // make call for getCollectionReport 
+      //  ~ Start  ----------------------------------------------------------------------------------
+      this.callHttpGet.makeRequest_getCollectionReport(this.postRequestObject).subscribe(response => {
+        // Log Response - Remove Later
+        console.warn(
+          "%c ___________________________ getCollectionReport Filtered Response ___________________________",
+          "background: #4dd0e1;color: black; font-weight: bold;"
+        );
+
+        console.log(response.collectionReport);
+
+        this._collectionReportList    = response.collectionReport;
+
+        this.collectionReportList_obj = this._collectionReportList;
+        if (this._collectionReportList.length > 0) {
+          this.showLoader = false;
+          this.showNoRecords = false;
+          this.filteredData  = this.collectionReportList_obj;
+          this.filteredTotal = this.collectionReportList_obj.length;
+
+          this.filter();
+        } else {
+
+          this.collectionReportList_obj = [];
+          this.filteredData  = this.collectionReportList_obj;
+          this.filteredTotal = this.collectionReportList_obj.length;
+
+          this.showLoader    = false;
+          this.showNoRecords = true;
+        }
+      });
+
+      // ~ End  -----------------------------------------------------------------------------------------
+
+    }
+
+  //  ~ End -onSubmit ________________________________________________________________________________________
+
+
+  // --  @details :  Class Functions for the Component ###################################################
+  //  ~ Start_____________________________________________________________________________________________
+
+  // ~ Start ---------------------------------------------------------------
+  // -- @details : Function get AreaList for autocomplete.
+  getAreaList() {
+    this.filteredAreas = this.area_name.valueChanges.pipe(
+      startWith(""),
+      map(
+        areaValue =>
+          areaValue ? this.filterAreas(areaValue) : this._areaList.slice()
+      )
+    );
+    console.warn("----------------- filteredAreas ----------------- ");
+    console.warn(this.filteredAreas);
+
+  }
+
+  filterAreas(areaValue: string) {
+    console.log(
+      "%c filterAreas ***** --------------------------------------------------- ",
+      "background: #4caf50;font-weight: bold;color: white; "
+    );
+    console.log(areaValue.toLowerCase());
+    
+    return this._areaList.filter(
+      area =>
+        area.area_name.toLowerCase().indexOf(areaValue.toLowerCase()) === 0
+    );
+  }
+
+  // ~ End ----------------------------------------------------------------
+
+
+  // ~ Start ---------------------------------------------------------------
+  // -- @details : Function get UsersList for autocomplete.
+  getUsersList() {
+    this.filteredUsers = this.user_name.valueChanges.pipe(
+      startWith(""),
+      map(
+        userValue =>
+          userValue ? this.filterUsers(userValue) : this._userList.slice()
+      )
+    );
+    console.warn("----------------- filteredUsers ----------------- ");
+    console.log('usersList',this._userList);
+    console.warn(this.filteredUsers);
+  }
+
+  filterUsers(userValue: string) {
+    console.log(
+      "%c filterUsers ***** --------------------------------------------------- ",
+      "background: #4caf50;font-weight: bold;color: white; "
+    );
+    console.log(userValue.toLowerCase());
+    
+    return this._userList.filter(
+      user =>
+        user.user_name.toLowerCase().indexOf(userValue.toLowerCase()) === 0
+    );
+  }
+
+  // ~ End ----------------------------------------------------------------
+
+  // ~ Start ---------------------------------------------------------------
+  // -- @details : Function for teradata datatable.
+  sort(sortEvent: ITdDataTableSortChangeEvent): void {
+    this.sortBy = sortEvent.name;
+    this.sortOrder = sortEvent.order;
+    this.filter();
+  }
+
+  search(searchTerm: string): void {
+    this.searchTerm = searchTerm;
+    this.filter();
+  }
+
+  page(pagingEvent: IPageChangeEvent): void {
+    this.fromRow = pagingEvent.fromRow;
+    this.currentPage = pagingEvent.page;
+    this.pageSize = pagingEvent.pageSize;
+    this.filter();
+  }
+
+  showAlert(event: any): void {
+    let row: any = event.row;
+    // .. do something with event.row
+  }
+
+  filter(): void {
+    let newData: any[] = this.collectionReportList_obj;
+    let excludedColumns: string[] = this.columns
+    .filter((column: ITdDataTableColumn) => {
+      return ((column.filter === undefined && column.hidden === true) ||
+              (column.filter !== undefined && column.filter === false));
+    }).map((column: ITdDataTableColumn) => {
+      return column.name;
+    });
+    newData = this._dataTableService.filterData(newData, this.searchTerm, true, excludedColumns);
+    this.filteredTotal = newData.length;
+    newData = this._dataTableService.sortData(newData, this.sortBy, this.sortOrder);
+    newData = this._dataTableService.pageData(newData, this.fromRow, this.currentPage * this.pageSize);
+    this.filteredData = newData;
+  }
+  // ~ End ---------------------------------------------------------------
+
+
+  // ~ Start ---------------------------------------------------------------
+  // -- @details : Function to clear fields on autocomplete for area and agent.
+  clearAgentNameField() {
+    
+    this.reportFilter.controls['user_name'].setValue('');
+    this.user_id = '';
+  }
+    
+  clearAreaNameField() {
+
+    this.reportFilter.controls['area_name'].setValue('');
+    this.area_id = '';
+  }
+  // ~ End ---------------------------------------------------------------
+
+
+  //  ~ End_____________________________________________________________________________________________
+
+// --  @details :  receiveToggleSidebarObj (Emit Event)#######################################################
+  //  ~ Start  -------------------------------------------------------------------------------------------------
+
+  receiveToggleSidebarObj($event) {
+    // Fetch the Customer Object Value from Event Emitter.
+    this._opened = $event;
+
+    // console.log("**** @@ Sidebar Open Object @@ ****");
+    console.log(this._opened);
+
+  }
+  //  ~ End  ----------------------------------------------------------------------------------------------------
+
+
+}
+// -------------------  Component & Class Definition - End ---------------------------------------------

@@ -1,0 +1,108 @@
+<!-- <header style=" padding-left: 0px; margin-left: 0px;">
+  <app-me-header-nav></app-me-header-nav>
+</header> -->
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;" class="">
+
+  <!-- A sidebar -->
+  <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+    <app-me-left-side-nav></app-me-left-side-nav>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <!-- header toolbar  Start-->
+    <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+    <!-- header toolbar  End-->
+
+    <section id="me-breadcrumb" style=" padding-left: 0px; margin-left: 0px;">
+      <nav class="mt-ng-075 pl-1 me-gradient-white">
+        <div class="nav-wrapper  pl-1">
+          <div class="col s12">
+            <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+            <a [routerLink]="['/helpcenter']" class="breadcrumb  ">Help Center</a>
+            <a [routerLink]="['/releaseindex']" class="breadcrumb  ">Release Index</a>
+            <a [routerLink]="['/releasesep18v017']" class="breadcrumb  ">September 2018 (version 0.17) </a>
+
+          </div>
+        </div>
+      </nav>
+    </section>
+
+    <ng-progress></ng-progress>
+
+    <main class="container-fluid ">
+      <section id="releaseIndex">
+        <div class="row mt-2">
+          <div class="col-xs-2">
+            <div class="card">
+               <app-me-release-index-sidebar></app-me-release-index-sidebar>
+            </div>
+              
+          </div>
+          <div class="col-xs-8 animated slideInRight">
+            <div class="card p-2">
+                <h5 class="darkPrimaryText me-text-shawdow m-0 p-0"> <i class="fas  fa-sticky-note "></i>
+                  September 2018 (version 0.17) - Release Summary</h5>
+                <mat-divider></mat-divider>
+                <p>
+                  September 2018 release of (version 0.17) - There are significant updates in this version, some of the key highlights include:  </p>
+                  <ul class="pl-2"> 
+                      <li> <i class="fas  fa-clipboard fa-fw font-weight-600"></i> Reports
+                          <ul class="pl-3">
+                            <li><p><a class="secondaryTextColor">Report UI : </a> Report UI has been revamped for ease of usage and better clarity.</p></li>
+                            <li><p><a class="secondaryTextColor">Column Grouping : </a>Columns grouping in the report provide better clarity on data grouping.</p></li>
+                            <li><p><a class="secondaryTextColor">Column Resize : </a>Allows user to expand the report column to visualize data clearly.</p> </li>
+                            <li><p><a class="secondaryTextColor">Row Expander : </a>Provides user to with additional information within visible viewport.</p></li>
+                          </ul>
+                      </li>
+                      <li> <i class="fas  fa-chart-area fa-fw font-weight-600"></i> Dashboard 
+                        <ul class="pl-3">
+                          <li><p><a class="secondaryTextColor">Updates Widget : </a> Update widget added to dashboard. This widget provides information on notifications, upgrades, announcements and new features.</p></li>
+                          <li><p><a class="secondaryTextColor">Agentwise Dasboard : </a> Agentwise summary has been removed from dashboard and is only available in collection report.</p></li>
+                           
+                        </ul>
+                      </li>
+                  </ul>  
+               
+            </div>
+            <div class="card p-2">
+                <h5 class="darkPrimaryText me-text-shawdow m-0 p-0"> <i class="fas  fa-sticky-note "></i>
+                  Release Details</h5>
+                <mat-divider></mat-divider>
+                <h6 class="secondaryTextColor"><i class="fab fa-slack-hash fa-fw"></i>Report UI</h6>
+                <div class="pl-2">
+                    <p clas>Report UI has been revamped for ease of usage and better clarity. Report filter has been conveniently placed on the left hand-side of the report.
+                        Report now has column resize and row expander for better data clarity. </p>
+                       
+                        <img src="assets/releaseAssets/Images/reportUI.PNG" class="responsive-img me-image-border z-depth-1-half">
+                </div>
+                <h6 class="secondaryTextColor"><i class="fab fa-slack-hash fa-fw"></i>Column Grouping</h6>
+                <div class="pl-2">
+                    <p> Report has column grouping as shown below in the image. </p>
+                 
+                    <img src="assets/releaseAssets/Images/columnGrouping.png" class="responsive-img me-image-border z-depth-1-half">
+                </div>
+                <h6 class="secondaryTextColor"><i class="fab fa-slack-hash fa-fw"></i>Column Resize</h6>
+                <div class="pl-2">
+                    <p> Report now has column resize option for better data clarity. Any column of the report can be resized to visualize data. </p>
+                 
+                    <img src="assets/releaseAssets/Gifs/reportColumnResize.gif" class="responsive-img me-image-border z-depth-1-half">
+                </div>
+                <h6 class="secondaryTextColor"><i class="fab fa-slack-hash fa-fw"></i>Row Expander</h6>
+                <div class="pl-2">
+                    <p> Provides user to with additional information within visible viewport. </p>
+                 
+                    <img src="assets/releaseAssets/Gifs/reportRowExpander.gif" class="responsive-img me-image-border z-depth-1-half">
+                </div>
+
+            </div>
+          </div>
+          
+        </div>
+
+      </section>
+    </main>
+  </div>
+  <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

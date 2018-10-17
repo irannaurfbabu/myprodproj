@@ -1,0 +1,425 @@
+<!-- <header>
+    <app-me-header-nav></app-me-header-nav>
+</header> -->
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;" >
+        
+    <!-- A sidebar -->
+    <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true"  [showBackdrop]="true">
+        <app-me-left-side-nav></app-me-left-side-nav>
+    </ng-sidebar>
+      
+    <!-- Page content -->
+    <div ng-sidebar-content>
+         <!-- header toolbar  Start-->
+        <app-me-header-nav (toggleSidebarEvent) = "receiveToggleSidebarObj($event)"></app-me-header-nav>
+        <!-- header toolbar  End-->
+
+<section id="me-breadcrumb">
+    <nav class="mt-ng-075">
+        <div class="nav-wrapper me-gradient-white pl-1">
+            <div class="col s12">
+                <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+                <a [routerLink]="['/managecomplaint']" class="breadcrumb  ">Manage Complaint</a>
+                <a [routerLink]="['/createcomplaint']" class="breadcrumb  ">Create Complaint</a>
+
+            </div>
+        </div>
+    </nav>
+</section>
+ 
+<div class="container mb-3">
+<!--Main Container - Start -->
+<main class="mt-ng-1 mt-1">
+    <div class="pl-2 pr-2">
+        <!--Section createComplaint - Start -->
+        <section id="createComplaint">
+
+            <!-- Form Content Row - Start -->
+            <form [formGroup]="createComplaint" (ngSubmit)="onSubmit(createComplaint.value)" [class.error]="!createComplaint.valid && createComplaint.touched">
+                    
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12	">
+                    <!-- CardPanel#1 - Start -->
+                    <div class="card-panel m-0 p-0">
+                       
+                        <!-- Form Header Row - Start -->
+                        <div class="row middle-xs mb-1 pb-1">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500"> 
+                                    <i class="fas fa-plus-square fa-fw"></i> Create Complaint </h5>
+                            </div>
+                        </div>
+                        <!-- Form Header Row - End -->
+
+                        <section id="customerDetails">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12	">
+                                    <!-- CardPanel#2 - Start -->
+                                    <div class="card-panel ml-3 mr-3 mt-2 mb-0 p-0">
+
+                                    <!-- Form Header Row - Start -->
+                                    <div class="row mb-0">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                <i class="fa fa-search fa-fw"></i>Search Customer</h5>
+                                        </div>
+                                    </div>
+                                    <!-- Form Header Row - End -->
+
+                                    <!--CardPanel#2 row#1 - Start -->
+                                    <div class="row ">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="input-field col s3">
+                                                <input id="customerId" type="text" class="validate" maxlength="50"  data-length="50" [formControl]="createComplaint.controls['customer_id']">
+                                                <label for="customerId" class="me-form-input-label me-input-label required">Customer Id</label>
+
+                                                <!-- *********************  form validation  messages ********************* -->
+                                                    <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                        <small class=""><i class="fas fa-info-circle fa-fw"></i>Enter Customer Id  </small>
+                                                   </div>
+                                                <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                <!-- *********************  form validation  messages ********************* -->
+
+                                            </div>
+                                            <div class="input-field col s3">
+                                                <input id="customerName" type="text" class="validate" maxlength="50" app-restrict-input="alphanumeric" data-length="50" [formControl]="createComplaint.controls['full_name']">
+                                                <label for="customerName" class="me-form-input-label">Customer Name</label>
+                                                
+                                                <!-- *********************  form validation  messages ********************* -->
+                                                <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                        <small class=""><i class="fas fa-info-circle fa-fw"></i>Enter Customer Name (optional) </small>
+                                                   </div>
+                                                <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                <!-- *********************  form validation  messages ********************* -->
+
+                                            </div>
+                                            <div class="input-field col s3">
+                                                <input id="phoneNumber" type="text" class="validate" app-restrict-input="integer" maxlength="50" data-length="50" [formControl]="createComplaint.controls['phone']">
+                                                <label for="phoneNumber" class="me-form-input-label">Phone Number</label>
+
+                                                <!-- *********************  form validation  messages ********************* -->
+                                                <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                        <small class=""><i class="fas fa-info-circle fa-fw"></i>Enter Phone Number (optional) </small>
+                                                   </div>
+                                                <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                <!-- *********************  form validation  messages ********************* -->
+
+                                            </div>
+                                            <!-- form -submit row - Start -->
+                                            <div class="input-field col s3">
+                                                <a class="btn right waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger" id="serach" href="#searchCustomer" (click)="searchcustomer();">
+                                                 Search <i class="fa fa-search fa-fw"></i></a>
+
+                                            </div>
+                                            <!-- form -submit row - End -->
+                                        </div>
+                                    </div>
+                                    <!--CardPanel#1 row#1 - End -->
+                                    
+                                    <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn m-2 " *ngIf="showAlertMessage">
+                                        <div class="me-alert-card-content orange-text">
+                                            <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong> Please Enter Customer Details (ex: Customer Id/ Name/ Phone Number) </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn m-2" *ngIf="showAlertMessageNoRecords">
+                                        <div class="me-alert-card-content red-text">
+                                            <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong> No Records Found... Please Try With Different Customer Details </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <div *ngIf="showSearchLoader"> 
+                                            <div class="progress">
+                                               <div class="indeterminate"></div>
+                                             </div>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+                                <!-- CardPanel#2 - end -->
+                            </div>
+                        </div> <!--/.row -- End -->
+                    </section>
+
+                            <!-- Modal Window Start -->
+                            <div id="searchCustomer" class="modal modal-fixed-footer">
+                                <div class="modal-content">
+                                    <!-- Form Header Row - Start -->
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">Select Customer</h5>
+                                        </div>
+                                    </div>
+                                    <!-- Form Header Row - End -->
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <table class="striped highlight z-depth-3 responsive-table">
+                                                <thead>
+                                                    <tr class="me-table-hdr primaryTextColor">
+
+                                                        <th>Customer Name</th>
+                                                        <th class="left-align ">Customer ID</th>
+                                                        <th class="center-align ">Phone</th>
+                                                        <th class="left-align ">Address</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr *ngFor="let customerDetail of CustomerDetailsList let i = index">
+                                                        <td class="left-align ">
+                                                            <label for="row1-{{customerDetail.customer_number}}">
+                                                            <input name="customers" type="radio" [value]="customerDetail.customer_number" (change)="selectedCustomer(customerDetail.customer_number)" id="row1-{{customerDetail.customer_number}}" />
+                                                            <span>{{customerDetail.full_name}}</span>
+                                                        </label>
+                                                        </td>
+                                                        <td class="left-align "> {{customerDetail.customer_id}} </td>
+                                                        <td class="center-align "> {{customerDetail.phone}} </td>
+                                                        <td class="left-align "> <small> {{customerDetail.address1}} </small> </td>
+                                                    </tr>
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer cg-modal-footer">
+                                    <a class="modal-action modal-close btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2 hoverable">
+                                        Close <i class="fas fa-times-circle   fa-fw"></i></a>
+                                    <a class="modal-action modal-close btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" (click)="getcustomer()">
+                                        Save <i class="fas fa-save  fa-fw"></i> </a>
+                                </div>
+                            </div> 
+                            <!-- Modal End -->
+
+                            <!-- *********** Customer Details ~ Start ***********  -->
+                                <div class="row mb-0 mt-0 pb-0" *ngIf="this.toggleContent == true">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <app-me-customer-details [setCustomerNumberObj]="this.customerNumberObj" (customerObjectEvent)="receiveCustomerDetailsObject($event)"></app-me-customer-details>
+                                    </div>
+                                </div>
+                            <!-- *********** Customer Details ~ End ***********    -->
+
+                            <section class="complaintSummary m-2">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12	">
+                                        <!-- CardPanel#3 - Start -->
+                                        <div class="card-panel m-1 p-0">
+                                            <!--CardPanel#3 row#1 - Start -->
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <!-- Form Header Row - Start -->
+                                                    <div class="row middle-xs m-0 p-0">
+                                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 grey lighten-3">
+                                                            <h5 class="left darkPrimaryText me-text-shawdow font-weight-500">Complaint Summary</h5>
+                                                            <div *ngIf="this.toggleContent == true" class="">
+                                                                <div *ngIf="this.flag==false">
+                                                                    <a class="btn mt-1 right waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger" id="addComplaint" href="#addComplaintModal" (click)="ClearComplaintValues();">Add
+                                                                        <i class="fas fa-plus-circle  fa-fw "></i> </a>
+                                                                </div>
+                                                                <div *ngIf="this.flag==true">
+                                                                    <a class="btn mt-1 right waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable modal-trigger" id="addComplaint" href="#addComplaintModal">Edit
+                                                                        <i class="fas fa-edit  fa-fw "></i> </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Form Header Row - End -->
+
+                                                    <!-- Add Complaint Modal Window -->
+                                                    <div id="addComplaintModal" class="modal modal-fixed-footer">
+                                                        <div class="modal-content">
+                                                            <!-- Form Header Row - Start -->
+                                                            <div class="row middle-xs mb-0 pb-0">
+                                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                    <div *ngIf="this.flag==false">
+                                                                        <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500"><i class="fas fa-plus-circle  fa-fw "></i> Add Complaint Summary</h5>
+                                                                    </div>
+                                                                    <div *ngIf="this.flag==true">
+                                                                        <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500"><i class="fas fa-edit  fa-fw "></i> Edit Complaint Summary</h5>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Form Header Row - End -->
+                                                            <div class="divider blue lighten-4"></div>
+                                                            <div class="card-panel col-xs-12 col-sm-12 col-md-12 col-lg-12 m-2">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <div class="row m-2">
+                                                                    <div class="input-field  col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                                        <select id="complaintType" [formControl]="createComplaint.controls['complaint_type']" required>
+                                                                            <option value="" disabled>Choose your option</option>
+                                                                            <option value="SRVC" selected>Service</option>
+                                                                            <option value="PYMNT">Payment</option>
+                                                                            <!-- <option value="STB">SetTop Box</option> -->
+                                                                        </select>
+                                                                        <label for="complaintType" class="me-form-input-label">Complaint Type</label>
+
+                                                                        <!-- *********************  form validation  messages ********************* -->
+                                                                            <div class="me-required-text left animated zoomIn" *ngIf="complaint_type.hasError('required')  && complaint_type.touched">
+                                                                                <small class="">
+                                                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                            </div>
+                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!complaint_type.valid && !complaint_type.touched">
+                                                                                <small class="">
+                                                                                <i class="fas fa-info-circle fa-fw"></i>Select Complaint Type</small>
+                                                    
+                                                                            </div>
+                                                                        
+                                                                        <!-- *********************  form validation  messages ********************* -->
+
+                                                                    </div>
+                                                                    <div class="input-field  col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                        <input id="complaintDescription" type="text" [formControl]="createComplaint.controls['complaint_description']" class="validate" app-restrict-input="words" required maxlength="100" data-length="100">
+                                                                        <label for="complaintDescription" class="me-form-input-label">Complaint Description</label>
+
+                                                                        <!-- *********************  form validation  messages ********************* -->
+                                                                        <div class="me-required-text left animated zoomIn" *ngIf="complaint_description.hasError('required')  && complaint_description.touched">
+                                                                                <small class="">
+                                                                                <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                            </div>
+                                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!complaint_description.valid && !complaint_description.touched">
+                                                                                <small class="">
+                                                                                <i class="fas fa-info-circle fa-fw"></i>Enter Complaint Description</small>
+                                                    
+                                                                            </div>
+                                                                        
+                                                                        <!-- *********************  form validation  messages ********************* -->
+
+                                                                    </div>
+                                                                </div>
+                                                                <!--End row-->
+                                                                <div class="row m-2">
+                                                                    <div class=" col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                                                                        <h6 class=" secondaryTextColor">Complaint Details </h6>
+                                                                        <div class="divider blue lighten-4"></div>
+                                                                        <div class="row">
+                                                                            <div class=" col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                                                <ul class="collection p-0">
+                                                                                    <li class="collection-item" *ngFor="let complaintTitle of ComplaintTitles" [ngClass]="{'active': selectedListRecord == complaintTitle}"> 
+                                                                                        <!-- <p [ngClass]="{'textPrimaryColor': selectedListRecord == complaintTitle}"> -->
+                                                                                        <label>
+                                                                                            <input name="complaintTitle" required type="radio" (click)="listClick($event, complaintTitle)" [formControl]="createComplaint.controls['complaint_title_id']" [value]="complaintTitle.complaint_title_id" />
+                                                                                            <span>{{complaintTitle.complaint_title}}</span>
+                                                                                        </label>
+                                                                                        <!-- </p> -->
+                                                                                    </li>   
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                        <div class="modal-footer cg-modal-footer">
+                                                            <a class="modal-action modal-close btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable">Close
+                                                                <i class="fas fa-times-circle Cancel fa-fw "></i></a>
+                                                            <a (click)="addComplaintSummary()" class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable">Save
+                                                                <i class="fas fa-check-circle  fa-fw "></i> </a>
+                                                        </div>
+                                                    </div>
+                                                    <!--end -Modal Window-->
+
+                                                    <div class="divider blue lighten-4"></div>
+
+                                                    <div class="row blue lighten-5 m-1">
+                                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                            <div class="row m-1">
+                                                                <div class="col-xs-3 col-sm-3 col-md-1 col-lg-1 padding-1">
+                                                                    <strong class="blue-text text-darken-2">Title</strong>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 padding-1 ml-1">
+                                                                    <strong>{{this.ComplaintSummary.complaintTitle}}</strong>
+                                                                </div>
+                                                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 padding-1">
+                                                                    <span class="blue-text text-darken-2">COMP ##-###</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row m-1 pb-1">
+                                                                <div class="col-xs-3 col-sm-3 col-md-1 col-lg-1 padding-1">
+                                                                    <strong class="   blue-text text-darken-2 ">Description</strong>
+                                                                </div>
+                                                                <div class="col-xs-8 col-sm-8 col-md-10 col-lg-10 padding-1 ml-1">
+                                                                    <span> {{this.ComplaintSummary.complaint_description}}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row m-1 pb-1 middle-xs">
+                                                                <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2 padding-1">
+                                                                    <strong class="   blue-text text-darken-2">Status</strong>
+                                                                </div>
+                                                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+                                                                    <span *ngIf="this.ComplaintSummary.complaint_status == 'REGISTERED'" class="me-status-chip green lighten-1">{{this.ComplaintSummary.complaint_status}}</span>
+                                                                </div>
+                                                                <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 padding-1">
+                                                                    <strong class="   blue-text text-darken-2">Type</strong>
+                                                                </div>
+                                                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+                                                                    <span *ngIf="this.ComplaintSummary.complaint_type == 'PYMNT'" class="cg-tabContent">PAYMENT</span>
+                                                                    <span *ngIf="this.ComplaintSummary.complaint_type == 'SRVC'" class="cg-tabContent">SERVICE</span>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="row m-1 pb-1 middle-xs">
+                                                                <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 padding-1">
+                                                                    <strong class="   blue-text text-darken-2">Registered By</strong>
+                                                                </div>
+                                                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+                                                                    <span>{{this.ComplaintSummary.created_by}}</span>
+                                                                </div>
+                                                                <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 padding-1">
+                                                                    <strong class="   blue-text text-darken-2">Registered On</strong>
+                                                                </div>
+                                                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                                                    <span>{{this.currentDate | date:'LLL d, y, h:mm:ss a' }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--row blue End -->
+
+                                                </div>
+                                            </div>
+                                            <!--CardPanel#3 row#1 - End -->
+                                        </div>
+                                        <!-- CardPanel#3 - end -->
+                                    </div>
+                                </div>
+                            </section>
+
+                           <!-- *************************** Submit Row ***************************   -->
+                            <div class="divider me-divider-color mb-1"></div>
+                            <section class="mt-1  pr-2 pb-2">
+
+                            <!-- form -submit row - Start -->
+                            <div class="row end-lg end-sm center-xs end-md mb-0">
+                                <div *ngIf="this.toggleContent == true" class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+                                    <a [routerLink]="[ '/managecomplaint']" class="btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2 hoverable" name="cancel"> Cancel  
+                                        <i class="fas fa-times-circle  fa-fw "></i>   
+                                    </a>
+                                    <button class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" type="submit" name="submit"
+                                    [ngClass]="{'animated wobble': IsformValid}" (mouseover)="IsformValid= (!createComplaint.valid)"
+                                    (mouseout)="IsformValid=false">Submit
+                                        <i class="fas fa-check-circle  fa-fw "></i> 
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- form -submit row - end -->
+                        </section>
+                            <simple-notifications [options]="options"></simple-notifications>
+                        
+                    </div>
+                    <!-- CardPanel#1 - end -->
+                </div>
+            </div>
+
+            </form> <!-- Form Content Row - End -->
+        </section>
+        <!--Section createComplaint - End -->
+    </div>
+</main>
+<!--Main Container - End -->
+</div>
+</div> <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

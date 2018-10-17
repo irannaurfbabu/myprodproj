@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+@import url(../node_modules/@angular/material/prebuilt-themes/indigo-pink.css);
+
+
+.ng-sidebar {
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+    pointer-events: auto;
+    position: absolute;
+    touch-action: auto;
+    will-change: initial;
+    z-index: 99999999;
+    background: #332e2e;
+    width: 18rem;
+  }
+  .user-view {
+    position: relative;
+    padding: 12px 32px 0;
+    margin-bottom: 8px;
+}

@@ -1,0 +1,89 @@
+<!-- ************** Bill History ~ Start ************** -->
+<div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+       <h6 _ngcontent-c1="" class="darkPrimaryText">
+                      <i _ngcontent-c1="" class="fa fa-clipboard fa-fw"></i> Showing Bill History for - {{this.customerName}} </h6>
+        <mat-divider class="mb-1"></mat-divider>
+        
+        <p-table [columns]="reportCols" [value]="billingListArray" [style]="{width:'100%'}" >
+          <ng-template pTemplate="caption">
+            There are {{billingListArray?.length}} bills.
+          </ng-template>
+          <ng-template pTemplate="header" let-reportCols>
+            <tr>
+              <th *ngFor="let col of reportCols">
+                {{col.header}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-billingListArray let-columns="reportCols">
+            <tr>
+              <td *ngFor="let col of reportCols" [ngStyle]="{'font-size': '0.75rem'}" [ngSwitch]="col.field" class="ui-resizable-column">
+  
+                <span *ngSwitchCase="'bill_date'">
+                  <span> {{ billingListArray["bill_date"] | date:'d LLL,y, h:mm:ss a, EEEE' }}
+                  </span>
+                </span>
+                <span *ngSwitchCase="'bill_status_desc'">
+                    <div class="row m-0 p-0 center-xs">
+                      <div class="col-xs">
+                        <span *ngIf=" billingListArray['bill_status_desc'] == 'Fully Paid'" class="me-status-chip green fnt-sz-065">
+                          {{
+                            billingListArray["bill_status_desc"] }} </span>
+                        <span *ngIf=" billingListArray['bill_status_desc'] == 'Unpaid'" class=" me-status-chip red fnt-sz-065 ">
+                          {{
+                            billingListArray["bill_status_desc"] }} </span>
+                        <span *ngIf=" billingListArray['bill_status_desc'] == 'Partial Paid'" class=" me-status-chip orange fnt-sz-065">
+                          {{
+                            billingListArray["bill_status_desc"] }} </span>
+                      </div>
+                    </div>
+                  </span>
+  
+                <span *ngSwitchCase="'previous_due'">
+                  <span class="right-aligned" style="float:right"> {{ billingListArray["previous_due"] | number :'2.2-2' }}
+                  </span>
+                </span>
+  
+                <span *ngSwitchCase="'bill_amount'">
+                  <span class="right-aligned" style="float:right"> {{ billingListArray["bill_amount"] | number :'2.2-2' }}
+                  </span>
+                </span>
+  
+                <span *ngSwitchCase="'collection_amount_original'">
+                  <span class="right-aligned" style="float:right"> {{ billingListArray["collection_amount_original"] | number :'2.2-2' }}
+                  </span>
+                </span>
+  
+                <span *ngSwitchCase="'received_amount'">
+                  <span class="right-aligned" style="float:right"> {{ billingListArray["received_amount"] | number :'2.2-2' }}
+                  </span>
+                </span>
+
+                <span *ngSwitchCase="'outstanding_balance'">
+                  <span class="right-aligned" style="float:right"> {{ billingListArray["outstanding_balance"] | number :'2.2-2' }}
+                  </span>
+                </span>
+
+                <span *ngSwitchCase="'received_date'">
+                    <span> {{ billingListArray["received_date"] | date:'d LLL,y, h:mm:ss a, EEEE' }}
+                    </span>
+                  </span>
+  
+                <span *ngSwitchDefault> {{billingListArray[col.field]}}</span> 
+  
+              </td>
+            </tr>
+          </ng-template>
+  
+  
+        </p-table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ************** Payment History ~ End ************** -->
+  
+  <!-- row#01 -------------------------------- -->
+  

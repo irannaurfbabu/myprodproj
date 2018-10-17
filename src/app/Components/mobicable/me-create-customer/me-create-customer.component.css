@@ -1,0 +1,21 @@
+.pac-container {
+    z-index: 100000;
+}
+
+.row:last-child {
+    margin-bottom: 0;
+}
+
+::ng-deep .cdk-overlay-container {
+    z-index: 1200 !important;
+}
+
+.example-tooltip-host {
+    display: inline-flex;
+    align-items: center;
+    margin: 50px;
+  }
+  
+  .example-select {
+    margin: 0 10px;
+  }

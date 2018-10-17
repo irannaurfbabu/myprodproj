@@ -1,0 +1,184 @@
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+    <!-- A sidebar -->
+    <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+        <app-me-left-side-nav></app-me-left-side-nav>
+    </ng-sidebar>
+
+    <!-- Page content -->
+    <div ng-sidebar-content>
+        <!-- header toolbar  Start-->
+        <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+        <!-- header toolbar  End-->
+
+        <section id="me-breadcrumb">
+            <nav class="mt-ng-075  pl-1 me-gradient-white">
+                <div class="nav-wrapper me-gradient-white pl-1">
+                    <div class="col s12">
+                        <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+                        <a [routerLink]="['/managepayments']" class="breadcrumb  ">Manage Payments</a>
+                        <a [routerLink]="['/addbalance']" class="breadcrumb  ">Collect Advance Payment</a>
+
+                    </div>
+                </div>
+            </nav>
+        </section>
+
+        <div class="container">
+            <main class="mt-ng-1 pt-3">
+                <div class="">
+                    <!-- Section Add Balance ~ Start -->
+                    <section class="addBalance">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xs-offset-2">
+                                <!-- Card Start -->
+                                <div class="card-panel m-0 p-0 ">
+                                    <!-- Form ~ Start -->
+                                    <form [formGroup]="addBalance" (ngSubmit)="onSubmit(addBalance.value)" [class.error]="!addBalance.valid && addBalance.touched">
+                                        <!-- form header ~ Start -->
+                                        <div class="row mb-0 pb-0">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <section>
+                                                    <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                        <i class="fas fa-rupee-sign fa-fw"></i>Collect Advance</h5>
+                                                </section>
+                                            </div>
+                                        </div>
+                                        <!-- form header ~ End -->
+                                        <!-- *********** Customer Details ~ Start ***********  -->
+                                        <div class="row mb-0 pb-0">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <app-me-customer-details></app-me-customer-details>
+                                            </div>
+                                        </div>
+                                        <!-- *********** Customer Details ~ End ***********    -->
+                                        <!-- *********** Add Balance Details ~ Start ***********    -->
+                                        <div class="row m-0 p-0">
+                                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                <div class="row mb-0 pb-0">
+                                                    <div class="col-xs-12 col-sm-12">
+                                                        <div class="input-field col s8">
+                                                            <input id="balanceAmount" type="text" class="validate active" app-restrict-input="amount" app-rest placeholder="Enter Amount" required maxlength="4" [formControl]="addBalance.controls['balanceAmount']">
+                                                            <label for="balanceAmount" class="me-form-input-label  me-input-label required">Enter Amount</label>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="balanceAmount.hasError('required')  && balanceAmount.touched">
+                                                                <small class="">
+                                                                   <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!balanceAmount.valid && !balanceAmount.touched">
+                                                                <small class="">
+                                                                <i class="fas fa-info-circle fa-fw"></i>Enter amount greater than 10</small>
+                                                            </div>
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="ShowBalanceAmount">
+                                                                <small class="">
+                                                              <i class="fas fa-exclamation-triangle fa-fw"></i>Amount must be greater than 10</small>
+                                                            </div>
+                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12">
+                                                        <div class="input-field col s12">
+                                                            <input id="balanceRemarks" type="text" maxlength="100" [formControl]="addBalance.controls['balanceRemarks']" placeholder="Enter Remarks">
+                                                            <label for="balanceRemarks" class="me-form-input-label  me-input-label">Remarks</label>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                                <small class="">
+                                  <i class="fas fa-info-circle fa-fw"></i>Enter Remarks (optional) </small>
+
+                                                            </div>
+                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+
+                                                <div class="row">
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xs-offset-1">
+                                                        <div class="card">
+                                                            <ul class="collection with-header">
+                                                                <li class="collection-header grey lighten-3 darkPrimaryText m-0 p-0">
+                                                                    <h6 class="font-weight-500 m-0 p-3">Balance Details</h6>
+                                                                </li>
+
+                                                                <li class="collection-item accentTextColor m-0 p-3 fnt-sz-075">Available Balance
+                                                                    <span class="secondary-content ">
+                                    {{this.availableBalance | number : '1.2-2' }}
+                                  </span>
+                                                                </li>
+                                                                <li class="collection-item accentTextColor m-0 p-3 fnt-sz-075">Advance Amount
+                                                                    <span class="secondary-content ">
+                                    {{this.newcredit | number : '1.2-2' }}
+                                  </span>
+                                                                </li>
+                                                                <li class="collection-item secondaryTextColor m-0 p-3 fnt-sz-075">New Available Balance
+                                                                    <span class="secondary-content secondaryTextColor">
+                                    {{this.newAvailableBalance | number : '1.2-2' }}
+                                  </span>
+                                                                </li>
+
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <!-- *********** Add Balance Details ~ End ***********    -->
+
+
+                                        <!-- *********** form -submit row - Start *********** -->
+
+                                        <!-- *************************** Submit Row ***************************   -->
+                                        <div class="divider mb-1 "></div>
+                                        <section class="mt-2 pr-2 pb-1">
+                                            <div class="row end-lg end-sm center-xs end-md">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <a (click)="cancelButtonLink()" class="btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2 hoverable" name="cancel"> Cancel
+                            <i class="fas fa-times-circle fa-fw"></i>
+                          </a>
+                                                    <button class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" type="submit" name="submit" [ngClass]="{'animated wobble': IsformValid}" (mouseover)="IsformValid= (!addBalance.valid)" (mouseout)="IsformValid=false">Submit
+                            <i class="fas fa-check-circle fa-fw"></i>
+                          </button>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <!-- *********** form -submit row - End *********** -->
+
+                                        <!-- *********** form - notifications - Start *********** -->
+                                        <simple-notifications></simple-notifications>
+                                        <!-- *********** form - notifications - End *********** -->
+
+                                    </form>
+
+                                    <!-- Form ~ End -->
+                                </div>
+                                <!-- Card End -->
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section Add Balance ~ End -->
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

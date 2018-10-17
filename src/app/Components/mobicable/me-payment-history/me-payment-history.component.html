@@ -1,0 +1,48 @@
+<!-- ************** Payment History ~ Start ************** -->
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+     <h6 _ngcontent-c1="" class="darkPrimaryText">
+                    <i _ngcontent-c1="" class="fa fa-clipboard fa-fw"></i> Showing Payment History for - {{this.customerName}} </h6>
+      <mat-divider class="mb-1"></mat-divider>
+      
+      <p-table [columns]="reportCols" [value]="paymentArray" [style]="{width:'100%'}" >
+        <ng-template pTemplate="caption">
+          There are {{paymentArray?.length}} payments
+        </ng-template>
+        <ng-template pTemplate="header" let-reportCols>
+          <tr>
+            <th *ngFor="let col of reportCols">
+              {{col.header}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-paymentArray let-columns="reportCols">
+          <tr>
+            <td *ngFor="let col of reportCols" [ngStyle]="{'font-size': '0.75rem'}" [ngSwitch]="col.field" class="ui-resizable-column">
+
+              <span *ngSwitchCase="'payment_date'">
+                <span> {{ paymentArray["payment_date"] | date:'d LLL,y, h:mm:ss a, EEEE' }}
+                </span>
+              </span>
+
+              <span *ngSwitchCase="'payment_amount'">
+                <span class="right-aligned" style="float:right"> {{ paymentArray["payment_amount"] | number :'2.2-2' }}
+                </span>
+              </span>
+
+              <span *ngSwitchDefault> {{paymentArray[col.field]}}</span>
+
+            </td>
+          </tr>
+        </ng-template>
+
+
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- ************** Payment History ~ End ************** -->
+
+<!-- row#01 -------------------------------- -->

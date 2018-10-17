@@ -1,0 +1,117 @@
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+  <!-- A sidebar -->
+  <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+    <app-me-left-side-nav></app-me-left-side-nav>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <!-- header toolbar  Start-->
+    <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+    <!-- header toolbar  End-->
+
+    <section id="me-breadcrumb">
+      <nav class="mt-ng-075">
+        <div class="nav-wrapper me-gradient-white pl-1">
+          <div class="col s12">
+            <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+            <a [routerLink]="['/manageexpense']" class="breadcrumb  ">Manage Expense</a>
+          </div>
+        </div>
+      </nav>
+    </section>
+    <ng-progress></ng-progress>
+
+    <!--Main Container - Start -->
+    <main class="mt-ng-2 pt-3">
+      <div class="pl-2 pr-2">
+        <!--Section manageArea - Start -->
+        <section id="manageUser">
+
+          <!-- Form Content Row - Start -->
+          <div class="row ">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+              <!-- CardPanel#1 - Start -->
+              <div class="card-panel p-2 z-depth-3">
+
+                <!-- Form Header Row - Start -->
+                <div class="row top-xs m-0 p-0">
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6  darkPrimaryText me-text-shawdow font-weight-500 m-0 p-0">
+                    <h5>
+                      <i class="fas fa-money-bill-alt"></i>
+                      Manage Expense </h5>
+                  </div>
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 light-primary-text m-0 p-0">
+                    <div class="row  m-0 pb-1 middle-xs">
+                      <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9  m-0 p-0">
+                        <div>
+                          <td-search-box #searchBox backIcon="arrow_back" [alwaysVisible]="true" class="push-center-sm" placeholder="Search here" (searchDebounce)="search($event)"
+                            flex>
+                          </td-search-box>
+                        </div>
+                      </div>
+                      <div class="col-xs-4 col-sm-4 col-md-3 col-lg-3  m-0 p-0">
+                        <a class="btn right flow-text waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable"
+                          id="createuser" [routerLink]="['/createexpense']"> Create
+                          <i class="fas fa-plus-circle  fa-fw "></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Form Header Row - End -->
+               
+                <section id="userTable">
+                 
+                  <div *ngIf="!showLoader">
+                    <mat-divider></mat-divider>
+                  </div>
+                  <div *ngIf="showLoader">
+                    <app-me-table-preloader></app-me-table-preloader>
+                  </div>
+                  <div class="center m-1" *ngIf="this.showNoRecords">
+                    <span class="me-status-chip red lighten-1">No Records</span>
+                  </div>
+                  <td-data-table #dataTable [data]="filteredData" [columns]="columns" [sortable]="true" [sortBy]="sortBy" [(ngModel)]="selectedRows"
+                    [sortOrder]="sortOrder" (sortChange)="sort($event)" [style.height.px]="300">
+                    
+
+                    <ng-template tdDataTableTemplate="expense_date" let-value="value">
+                        {{value | date:'dd-MMM-yy HH:mm a'}}
+                      </ng-template>
+                    <ng-template tdDataTableTemplate="expense_id" let-value="value">
+                      <a [routerLink]="['/editexpense', value]">
+                        <i class="fas fa-edit fa-lg darkPrimaryText"></i>
+                      </a>
+                    </ng-template>
+                  </td-data-table>
+
+                  <td-paging-bar #pagingBar [pageSize]="pageSize" [total]="filteredTotal" (change)="page($event)">
+                    <span hide-xs>Rows per page:</span>
+                    <mat-select [style.width.px]="50" [(ngModel)]="pageSize">
+                      <mat-option *ngFor="let size of [50,100,500]" [value]="size">
+                        {{size}}
+                      </mat-option>
+                    </mat-select>
+                    {{pagingBar.range}}
+                    <span hide-xs>of {{pagingBar.total}}</span>
+                  </td-paging-bar>
+                </section>
+              </div>
+              <!-- CardPanel#1 - end -->
+            </div>
+          </div>
+          <!-- Form Content Row - End -->
+
+
+        </section>
+        <!--Section manageArea - End -->
+      </div>
+
+    </main>
+    <!--Main Container - End -->
+  </div>
+  <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

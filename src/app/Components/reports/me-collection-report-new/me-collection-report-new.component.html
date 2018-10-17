@@ -1,0 +1,349 @@
+<!-- <header style=" padding-left: 0px; margin-left: 0px;">
+  <app-me-header-nav></app-me-header-nav>
+</header> -->
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+  <!-- A sidebar -->
+  <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+    <app-me-left-side-nav></app-me-left-side-nav>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <!-- header toolbar  Start-->
+    <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+    <!-- header toolbar  End-->
+
+    <section id="me-breadcrumb" style=" padding-left: 0px; margin-left: 0px;">
+      <nav class="mt-ng-075 pl-1 me-gradient-white">
+        <div class="nav-wrapper  pl-1">
+          <div class="col s12">
+            <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+            <a [routerLink]="['/collectionreport']" class="breadcrumb  ">Collection Report</a>
+
+          </div>
+        </div>
+      </nav>
+    </section>
+
+    <ng-progress></ng-progress>
+
+    <main class="mt-1">
+
+      <form [formGroup]="reportFilter" (ngSubmit)="onSubmit(reportFilter.value)" [class.error]="!reportFilter.valid && reportFilter.touched">
+
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-12 col-md-2 col-lg-2 pr-0">
+              <section id="reportFilters" class="">
+                <div class="row grey lighten-3 m-0 p-0 pb-3 z-depth-3 border-radius-4 animated fadeIn">
+                  <div class="col-sm-12 m- mt-3 ml-0">
+                    <h6 class="darkPrimaryText">
+                      <i class="fa fa-search-plus fa-fw"></i> Filters </h6>
+                    <mat-divider></mat-divider>
+                    <mat-divider></mat-divider>
+                  </div>
+
+                  <div class="col-sm-12 pt-1">
+                    <div class="me-container">
+                      <mat-form-field appearance="standard">
+                        <mat-label>Select Area</mat-label>
+
+                        <input id="filter_area" type="text" placeholder="Select area" type="text" maxlength="50"
+                          data-length="50" [formControl]="reportFilter.controls['area_name']" matInput
+                          [matAutocomplete]="filter_area" (click)="getAreaList()">
+                        <mat-icon matSuffix (click)="clearAreaNameField()" class="grey-text text-lighten-1 cursor-pointer">clear</mat-icon>
+                        <!-- <mat-hint>Click\Type to select area</mat-hint> -->
+                        <mat-autocomplete #filter_area="matAutocomplete">
+                          <mat-option *ngFor="let area of filteredAreas | async" [value]="area.area_name">
+                            {{ area.area_name }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 pt-1">
+                    <div class="me-container">
+                      <mat-form-field appearance="standard">
+                        <mat-label>Select Agent</mat-label>
+                        <input id="filter_user" type="text" placeholder="Select agent" type="text" [formControl]="reportFilter.controls['user_name']"
+                          maxlength="50" data-length="50" matInput [matAutocomplete]="filter_user" (click)="getUsersList()">
+                        <mat-icon matSuffix (click)="clearAgentNameField()" class="grey-text text-lighten-1 cursor-pointer">clear</mat-icon>
+                        <!-- <mat-hint>Click\Type to select agent</mat-hint> -->
+                        <mat-autocomplete #filter_user="matAutocomplete">
+                          <mat-option *ngFor="let user of filteredUsers | async" [value]="user.user_name">
+                            {{ user.user_name }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 pt-1">
+                    <div class="me-container">
+                      <mat-form-field style="width: 100%">
+                        <mat-select [formControl]="reportFilter.controls['dateRange']" placeholder="Select Date range ">
+                          <mat-option *ngFor="let daterange of dateRangeList" [value]="daterange.value">{{daterange.viewValue}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 pt-1">
+                    <div class="me-container">
+                      <mat-form-field appearance="standard">
+                        <mat-label>From Date</mat-label>
+                        <input matInput [matDatepicker]="picker" [min]="this.minDate" [max]="this.maxDate"
+                          [formControl]="reportFilter.controls['fromDate']" placeholder="From Date" [readonly]="true"
+                          [ngClass]="{'me-readonly': true }">
+                        <mat-datepicker-toggle matSuffix [for]="picker" [ngClass]="{'disabled': this.datePickerDisableFlag }"></mat-datepicker-toggle>
+                        <mat-datepicker #picker [disabled]="datePickerDisableFlag"></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 pt-1">
+                    <div class="me-container">
+                      <mat-form-field appearance="standard">
+                        <mat-label>To Date</mat-label>
+                        <input matInput [matDatepicker]="picker2" [min]="this.minDate" [max]="this.maxDate"
+                          [formControl]="reportFilter.controls['toDate']" placeholder="To Date" [readonly]="true"
+                          [ngClass]="{'me-readonly': true }">
+                        <mat-datepicker-toggle matSuffix [for]="picker2" [ngClass]="{'disabled': this.datePickerDisableFlag }"></mat-datepicker-toggle>
+                        <mat-datepicker #picker2 [disabled]="datePickerDisableFlag"></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 pt-1 pb-3 mb-2">
+                    <div class="me-container">
+                      <button class="btn waves-effect waves-light border-round black white-text z-depth-2 hoverable "
+                        type="submit" name="submit">Search
+                        <i class="fas fa-search  fa-fw"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              </section>
+            </div>
+            <div class="col-sm-12 col-md-10 col-lg-10">
+              <div class="row p-0 m-0">
+                <div class="col-sm-12 ml-0 pl-0">
+
+                  <mat-tab-group (selectedTabChange)="onLinkClick($event)">
+                    <mat-tab label="Collection Details">
+                      <!-- Report Content ~ Start -->
+                      <section id="collectionReport">
+                        <div class="card animated fadeIn" *ngIf="showLoader">
+                          <div class="row p-3 pt-1 m-1">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                              <h5 class="center-align darkPrimaryText mb-1">Loading...<i class="fa fa-cog fa-spin  fa-fw"></i></h5>
+                              <div class="progress">
+                                <div class="indeterminate"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <section id="reportData" *ngIf="!showLoader">
+                          <p-table [columns]="reportCols" [value]="collectionListArray" [scrollable]="true" [style]="{width:'100%'}"
+                            scrollHeight="380px" #dt [paginator]="true" [rows]="200" exportFilename="{{exportFileName}}{{fileCurrentDate | date:'d_MMM_y_h_mm_ss'}}"
+                            dataKey="customer_id" [resizableColumns]="true" columnResizeMode="expand" [responsive]="true">
+                            <ng-template pTemplate="caption" class="animated fadeIn">
+                              <div class="row middle-xs mb-0 pb-0">
+                                <div class="col-xs-6 ">
+                                  <button class="btn waves-effect waves-light left" (click)="dt.exportCSV()">Export All</button>
+                                  <p class="pl-2 left-align grey-text"><small><i class="fas fa-info-circle fa-fw grey-text"></i>There
+                                      are {{collectionListArray?.length}} records. </small></p>
+                                </div>
+                                <div class="col-xs-6">
+                                  <div class="input-field col s12">
+                                    <span>
+                                      <i class="postfix fas fa-search grey-text text-lighten-1 "></i>
+                                    </span>
+                                    <input type="text" class="fnt-sz-100" pInputText size="50" placeholder="Search..."
+                                      (input)="dt.filterGlobal($event.target.value, 'contains')" style="border-bottom: 1px solid #9e9e9e;">
+                                  </div>
+
+
+                                </div>
+                              </div>
+                            </ng-template>
+                            <ng-template pTemplate="colgroup" let-reportCols>
+                              <colgroup>
+                                <col span="1"  style="width:50px">
+                                <col *ngFor="let col of reportCols" [style.width]="col.width+'px'">
+                              </colgroup>
+                            </ng-template>
+                            <ng-template pTemplate="header" let-reportCols>
+                              <tr>
+
+                                <th colspan="5" class="darkPrimaryText  font-weight-700">Customer Details</th>
+                                <th colspan="6" class="darkPrimaryText  font-weight-700">Collection Details</th>
+                                <th colspan="5" class="darkPrimaryText  font-weight-700">Subscription Details</th>
+                              </tr>
+                              <tr>
+                                <th style="width:50px"></th>
+                                <th *ngFor="let col of reportCols" [ngStyle]="{'font-size': '0.85rem'}" pResizableColumn>
+                                  {{col.header}}
+                                </th>
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-collectionListArray let-expanded="expanded" let-columns="reportCols">
+                              <tr>
+                                <td style="width:50px">
+                                  <a [pRowToggler]="collectionListArray">
+                                    <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                                  </a>
+                                </td>
+                                <td *ngFor="let col of reportCols" [ngStyle]="{'font-size': '0.75rem'}" [ngSwitch]="col.field" class="ui-resizable-column">
+                                  <span *ngSwitchCase="'full_name'">
+                                    {{collectionListArray["full_name"] }} <br>
+                                    <small> {{collectionListArray["phone"] }} </small>
+                                  </span>
+                                  <span *ngSwitchCase="'address1'">
+                                    <small>{{collectionListArray["address1"] }} </small>
+                                  </span>
+                                  <span *ngSwitchCase="'payment_amount'">
+                                    <span class="right-aligned" style="float:right"> {{
+                                      collectionListArray["payment_amount"]
+                                      | number :'2.2-2' }} </span>
+                                  </span>
+                                  <span *ngSwitchCase="'payment_date'"> {{collectionListArray[col.field] | date:'EEEE,d LLL,y, h:mm:ss a' }}</span>
+                                  <span *ngSwitchCase="'stb_vc_number'"> 
+                                    <span style=" word-wrap: break-word; white-space: pre-wrap; ">{{collectionListArray["stb_vc_number"] }}</span>
+                                  </span>
+
+                                  <span *ngSwitchDefault> {{collectionListArray[col.field]}}</span>
+                                </td>
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="rowexpansion" let-collectionListArray let-columns="reportCols">
+
+                              <tr class="p-2">
+                                <td [attr.colspan]="6">
+                                    <table id="subscription">
+                                        <tr>
+                                          <th>Pack</th>
+                                          <th>STB Number</th>
+                                          <th>VC Number</th>
+                                          <th>Status</th>
+                                        </tr>
+                                        <tr>
+                                          <td>{{collectionListArray.subscription_name}}</td>
+                                          <td  style=" word-wrap: break-word; white-space: pre-wrap; ">{{collectionListArray.stb_number}}</td>
+                                          <td  style=" word-wrap: break-word; white-space: pre-wrap; ">{{collectionListArray.stb_vc_number}}</td>
+                                          <td  style=" word-wrap: break-word; white-space: pre-wrap; ">{{collectionListArray.service_status}}</td>
+                                         
+                                      </table>
+                                            
+                                </td>
+                              </tr>
+
+                            </ng-template>
+                          </p-table>
+                        </section>
+
+
+
+                      </section>
+                      <!-- Report Content ~ End  (click)="calculateAgentSummary(collectionListArray)"-->
+
+                    </mat-tab>
+                    <mat-tab label="Agentwise Summary">
+                      <section>
+                        <div class="card animated fadeIn" *ngIf="showLoader1">
+                          <div class="row p-3 pt-1 m-1">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                              <h5 class="center-align darkPrimaryText mb-1">Loading...<i class="fa fa-cog fa-spin  fa-fw"></i></h5>
+                              <div class="progress">
+                                <div class="indeterminate"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card animated fadeIn" *ngIf="!showLoader1">
+                          <div class="row p-3 pt-1 m-1">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                              <div class="row center-xs">
+                                <div class="col-xs-8 col-sm-8">
+                                  <div class="card p-3">
+                                    <p class="center-align darkPrimaryText mb-2"> <i class="fas fa-info-circle"></i>
+                                      Showing Agentwise Summary from {{this.fromDateDisplay | date:'dd-MMM-yy'}} till
+                                      {{this.toDateDisplay | date:'dd-MMM-yy'}}</p>
+                                    <p-table [value]="_agentwiseSummaryList">
+                                      <ng-template pTemplate="header">
+                                        <tr>
+                                          <th class="font-weight-600 center-align">Name</th>
+                                          <th class="font-weight-600  center-align">Count</th>
+                                          <th class="font-weight-600  center-align">Amount</th>
+                                        </tr>
+                                      </ng-template>
+                                      <ng-template pTemplate="body" let-agentObj>
+                                        <tr>
+                                          <td class="center-align">{{agentObj.agentName}}</td>
+                                          <td class="right-align">{{agentObj.count}}</td>
+                                          <td class="right-align">{{agentObj.received_amt_total | number :'1.2'}}</td>
+                                        </tr>
+
+                                      </ng-template>
+                                      <ng-template pTemplate="footer">
+                                        <tr>
+                                          <td class="font-weight-700 center-align">Total</td>
+                                          <td class="font-weight-700 right-align">{{this._agentwiseSummaryTotal.count
+                                            }}</td>
+                                          <td class="font-weight-700 right-align">{{this._agentwiseSummaryTotal.amount
+                                            |
+                                            number
+                                            :'1.2' }}</td>
+                                        </tr>
+                                      </ng-template>
+
+                                    </p-table>
+
+
+
+                                    <!-- <table class="highlight  animated fadeIn">
+                                          <thead>
+                                            <tr>
+                                              <th class="font-weight-600 center-align">Name</th>
+                                              <th class="font-weight-600  center-align">Count</th>
+                                              <th class="font-weight-600  center-align">Amount</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr *ngFor="let agentObj of _agentwiseSummaryList">
+                                              <td class="center-align">{{agentObj.agentName}}</td>
+                                              <td class="right-align">{{agentObj.count}}</td>
+                                              <td class="right-align">{{agentObj.received_amt_total | number :'1.2'}}</td>
+                                            </tr>
+                                            <tr>
+                                              <td class="font-weight-700 center-align">Total</td>
+                                              <td class="font-weight-700 right-align">{{this._agentwiseSummaryTotal.count }}</td>
+                                              <td class="font-weight-700 right-align">{{this._agentwiseSummaryTotal.amount | number
+                                                :'1.2' }}</td>
+                                            </tr>
+              
+                                          </tbody>
+                                        </table> -->
+                                  </div>
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+                    </mat-tab>
+                  </mat-tab-group>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+    </main>
+  </div>
+  <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

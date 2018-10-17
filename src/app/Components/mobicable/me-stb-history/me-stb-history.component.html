@@ -1,0 +1,76 @@
+<!-- ************** Stb Details ~ Start ************** -->
+
+<!-- row#01 -------------------------------- -->
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="card-panel m-0 p-0 ">
+            <div class="row ">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                        <i class="fas fa-book pr-1"></i>STB Status History</h5>
+                </div>
+            </div>
+
+            <!-- td-data-table row  - start -->
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                    <div *ngIf="showLoader">
+                        <app-me-table-preloader></app-me-table-preloader>
+                    </div>
+                   
+                </div>
+            </div>
+            <!-- td-data-table row  - End -->
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let stblist of displayData.stbList; let i = index" >
+                    <mat-expansion-panel-header>
+                        <mat-panel-title style="width: 300px;">
+                            <span class="m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500" style=" white-space: nowrap;">
+                                VC# : {{this.stbDetailsList[i].stb_vc_number}}
+                            </span>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <!-- {{this.stbDetailsList[i].service_status}} -->
+                            <span *ngIf="stbDetailsList[i].service_status == 'ACTIVE'" style="padding: 0.6em 0.4em; font-size: 80%" class="me-status-chip green lighten-4 green-text right-align z-depth-2">ACTIVE</span>
+                            <span *ngIf="stbDetailsList[i].service_status == 'SUSPENDED'" style="padding: 0.6em 0.4em; font-size: 80%" class="me-status-chip orange lighten-4 orange-text right-align z-depth-2">SUSPENDED</span>
+                            <span *ngIf="stbDetailsList[i].service_status == 'DISCONNECTED'" style="padding: 0.6em 0.4em; font-size: 80%" class="me-status-chip red lighten-4 red-text right-align z-depth-2">DISCONNECTED</span>
+                            <span *ngIf="stbDetailsList[i].service_status == 'FREEBOX'" style="padding: 0.6em 0.4em; font-size: 80%" class="me-status-chip blue lighten-4 blue-text right-align z-depth-2">FREE BOX</span>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <table>
+                        <thead>
+                            <th>Customer Id</th>
+                            <th>Customer Name</th>
+                            <th>Service Status</th>
+                            <th>VC Number</th>
+                            <th>STB Number</th>
+                            <th>Updated On</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let stb of stblist">
+                                <td>{{stb.customer_id}}</td>
+                                <td>{{stb.customer_name}}</td>
+                                <td>
+                                    <span *ngIf="stb.service_status == 'ACTIVE'" class="me-status-chip green lighten-4 green-text  right-align">Active</span>
+                                    <span *ngIf="stb.service_status == 'SUSPENDED'" class="me-status-chip orange lighten-4 orange-text  right-align">SUSPENDED</span>
+                                    <span *ngIf="stb.service_status == 'DISCONNECTED'" class="me-status-chip red lighten-4 red-text right-align">DISCONNECTED</span>
+                                    <span *ngIf="stb.service_status == 'FREEBOX'" class="me-status-chip blue lighten-4 blue-text  right-align">FREE BOX</span>
+                                </td>
+                                <td>{{stb.stb_vc_number}}</td>
+                                <td>{{stb.stb_number}}</td>
+                                <td>{{stb.created_on}}</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </mat-expansion-panel>
+
+            </mat-accordion>
+
+        </div>
+    </div>
+</div>
+<!-- ************** Stb Details ~ End ************** -->
+
+<!-- row#01 -------------------------------- -->

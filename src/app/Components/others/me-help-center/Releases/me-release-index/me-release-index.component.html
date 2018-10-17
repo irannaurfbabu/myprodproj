@@ -1,0 +1,62 @@
+<!-- <header style=" padding-left: 0px; margin-left: 0px;">
+  <app-me-header-nav></app-me-header-nav>
+</header> -->
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;" class="">
+
+  <!-- A sidebar -->
+  <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+    <app-me-left-side-nav></app-me-left-side-nav>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <!-- header toolbar  Start-->
+    <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+    <!-- header toolbar  End-->
+
+    <section id="me-breadcrumb" style=" padding-left: 0px; margin-left: 0px;">
+      <nav class="mt-ng-075 pl-1 me-gradient-white">
+        <div class="nav-wrapper  pl-1">
+          <div class="col s12">
+            <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+            <a [routerLink]="['/helpcenter']" class="breadcrumb  ">Help Center</a>
+            <a [routerLink]="['/releaseindex']" class="breadcrumb  ">Release Index</a>
+
+          </div>
+        </div>
+      </nav>
+    </section>
+
+    <ng-progress></ng-progress>
+
+    <main class="container-fluid">
+      <section id="releaseIndex">
+        <div class="row mt-2">
+          <div class="col-xs-2">
+            <div class="card">
+               <app-me-release-index-sidebar></app-me-release-index-sidebar>
+            </div>
+              
+          </div>
+          <div class="col-xs-8">
+            <div class="card p-2">
+                <h5 class="darkPrimaryText me-text-shawdow m-0 p-0"> <i class="fas  fa-sticky-note "></i>
+                Release Index</h5>
+                <mat-divider></mat-divider>
+                <p>
+                  Release index has the list of releases listed monthwise.  </p>
+                  <ul class="pl-2">
+                      <li> <i class="fas  fa-minus fa-fw"></i> Click on the month menu of the left hand side of this panel to expand the release list.</li>
+                      <li> <i class="fas  fa-minus fa-fw"></i> Click on any of the release link to view release details. </li>
+                  </ul>  
+               
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+  <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

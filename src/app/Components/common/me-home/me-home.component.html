@@ -1,0 +1,715 @@
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+  <!-- A sidebar -->
+  <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+    <app-me-left-side-nav></app-me-left-side-nav>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <!-- header toolbar  Start-->
+
+    <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+
+    <!-- header toolbar  End-->
+    <!-- <app-me-forms-links></app-me-forms-links> -->
+
+    <main class="p-2">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+          <div class="row mb-0 pb-1">
+            <!-- Card#01 ~ Start -->
+            <div class="col-xs-3">
+              <div class="card-panel z-depth-2 animated slideInDown">
+                <div class="widget-icon">
+                  <i class="fas fa-users widget-grad-1 white-text fa-3x  z-depth-1-half"></i>
+                </div>
+                <div class="widget-content pr-1">
+                  <h6 class="m-0 p-0 width-100 green-text">Customers</h6>
+                  <small class="grey-text">** this month</small>
+                  <h5 class="m-0 p-0 width-100  me-text-shawdow green-text">{{displayNewCustomer}}</h5>
+                </div>
+                <div class="progress">
+                  <div class="determinate green" [ngStyle]="{'width.%': displayCustomerPerct}"></div>
+                </div>
+                <p class="grey-text mb-0 pb-0">
+                  Total
+                  <span class="badge grey-text m-0 p-0" style="text-align: right;">{{displayTotalCustomer}}</span>
+                </p>
+              </div>
+            </div>
+            <!-- Card#01 ~ End -->
+            <!-- Card#02 ~ Start -->
+            <div class="col-xs-3">
+              <div class="card-panel z-depth-2 animated slideInDown">
+                <div class="widget-icon">
+                  <i class="fas fa-tv widget-grad-2 white-text fa-3x  z-depth-1-half"></i>
+                </div>
+                <div class="widget-content pr-1">
+                  <h6 class="m-0 p-0 width-100 blue-text">Connections</h6>
+                  <small class="grey-text">** active only</small>
+                  <h5 class="m-0 p-0 width-100  me-text-shawdow blue-text">{{displayActiveConnections}}</h5>
+                </div>
+                <div class="progress">
+                  <div class="determinate blue" [ngStyle]="{'width.%':  displayConnectionPerct}"></div>
+                </div>
+                <p class="grey-text mb-0 pb-0">
+                  Total
+                  <span class="badge grey-text m-0 p-0" style="text-align: right;">{{displayTotalConnections}}</span>
+                </p>
+              </div>
+            </div>
+            <!-- Card#02 ~ End -->
+            <!-- Card#03 ~ Start -->
+            <div class="col-xs-3">
+              <div class="card-panel z-depth-2 animated slideInDown">
+                <div class="widget-icon">
+                  <i class="fas fa-thumbs-down widget-grad-3 white-text fa-3x  z-depth-1-half"></i>
+                </div>
+                <div class="widget-content pr-1">
+                  <h6 class="m-0 p-0 width-100 purple-text">Complaints</h6>
+                  <small class="grey-text">** open only</small>
+                  <h5 class="m-0 p-0 width-100  me-text-shawdow purple-text">{{this.displayOpenComplaints}}</h5>
+                </div>
+                <div class="progress">
+                  <div class="determinate purple" [ngStyle]="{'width.%':  displayComplaintsPercent }"></div>
+                </div>
+                <p class="grey-text mb-0 pb-0">
+                  Total
+                  <span class="badge grey-text m-0 p-0" style="text-align: right;">{{this.displayTotalComplaints}}</span>
+                </p>
+              </div>
+            </div>
+            <!-- Card#03 ~ End -->
+            <!-- Card#04 ~ Start -->
+            <div class="col-xs-3">
+              <div class="card-panel z-depth-2 animated slideInDown">
+                <div class="widget-icon">
+                  <i class="fas fa-money-bill-alt widget-grad-4 white-text fa-3x  z-depth-1-half"></i>
+                </div>
+                <div class="widget-content pr-1">
+                  <h6 class="m-0 p-0 width-100 deep-orange-text">Expense</h6>
+                  <small class="grey-text">** this month</small>
+                  <h5 class="m-0 p-0 width-100  me-text-shawdow deep-orange-text">{{this.month_expense}}</h5>
+                </div>
+                <div class="progress">
+                  <div class="determinate deep-orange" [ngStyle]="{'width.%':  displayExpensePercent }"></div>
+                </div>
+                <p class="grey-text mb-0 pb-0">
+                  Total
+                  <span class="badge grey-text m-0 p-0" style="text-align: right;">{{this.total_expense}}</span>
+                </p>
+              </div>
+            </div>
+            <!-- Card#04 ~ End -->
+          </div>
+          <div class="row">
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+              <mat-tab-group>
+
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-money-bill-alt fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Collection Trend</span>
+                  </ng-template>
+                  <section id="collectionTrend">
+                    <div class="min-height-200 center-align pt-2" *ngIf="showCircularLoader5">
+                      <app-me-preloader-circular></app-me-preloader-circular>
+                    </div>
+
+                    <div style="display: block;" *ngIf="!showCircularLoader5">
+                      <canvas height="120" baseChart [datasets]="collectionTrendData" [labels]="collectionTrendLabels"
+                        [options]="barChartOptions" [legend]="barChartLegend" [colors]="barChartColors1" [chartType]="barChartType"></canvas>
+                    </div>
+                  </section>
+                </mat-tab>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-money-bill-alt fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Expense Trend</span>
+                  </ng-template>
+                  <section id="collectionTrend">
+                    <div class="min-height-200 center-align pt-2" *ngIf="showCircularLoader5">
+                      <app-me-preloader-circular></app-me-preloader-circular>
+                    </div>
+
+                    <div style="display: block;" *ngIf="!showCircularLoader5">
+                      <canvas height="120" baseChart [datasets]="expenseTrendData" [labels]="expenseTrendLabels"
+                        [options]="barChartOptions" [legend]="barChartLegend" [colors]="barChartColors2" [chartType]="barChartType"></canvas>
+                    </div>
+                  </section>
+                </mat-tab>
+
+              </mat-tab-group>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+              <mat-tab-group>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-money-bill-alt fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Collection Status</span><br>
+
+                  </ng-template>
+                  <section id="collectionStatus" class="min-height-200 width-100">
+                    <div class="row middle-xs">
+                      <div class="col-xs-12 mt-1" *ngIf="showCircularLoader4">
+                        <div class="center-align">
+                          <app-me-preloader-circular></app-me-preloader-circular>
+                        </div>
+                      </div>
+
+                      <div class="col-xs-12" *ngIf="!showCircularLoader4">
+                        <p class="m-0 p-0 mt-1 grey-text"><small><i class="fas fa-info-circle fa-fw"></i>active
+                            customers only</small></p>
+                        <div class="row middle-xs center-xs d-flex justify-content-space-evenly mt-2">
+                          <div class="col-xs-5 z-depth-2 min-height-100 d-flex  m-0 p-0 widget-2">
+                            <div class="widget-grad-2 p-3 widget-2-icon">
+                              <i class="fas fa-rupee-sign  white-text fa-2x "></i>
+                            </div>
+                            <div class="p-3 widget-2-content">
+
+                              <h5 class="blue-text  m-0 p-0 mb-1 ">{{this.displayTotalCollection | number : '1.0-0' }}</h5>
+                              <h6 class="blue-text m-0 p-0 mb-1 ">Total Collection </h6>
+                            </div>
+                          </div>
+                          <div class="col-xs-5 z-depth-2 min-height-100 d-flex  m-0 p-0 widget-2">
+                            <div class="widget-grad-1 p-3 widget-2-icon">
+                              <i class="fas fa-rupee-sign  white-text fa-2x "></i>
+                            </div>
+                            <div class="p-3 widget-2-content">
+
+                              <h5 class="green-text  m-0 p-0 mb-1 ">{{this.displayTotalReceived | number : '1.0-0' }}
+                              </h5>
+                              <h6 class="green-text m-0 p-0 mb-1">Total Received </h6>
+                            </div>
+                          </div>
+
+
+
+                        </div>
+                        <div class="row middle-xs center-xs d-flex justify-content-space-evenly">
+
+                          <div class="col-xs-5 z-depth-2 min-height-100 d-flex  m-0 p-0 widget-2">
+                            <div class="widget-grad-4 p-3 widget-2-icon">
+                              <i class="fas fa-rupee-sign  white-text fa-2x "></i>
+                            </div>
+                            <div class="p-3 widget-2-content">
+
+                              <h5 class="red-text  m-0 p-0 mb-1 ">{{this.displayTotalOutstanding | number : '1.0-0' }}
+                              </h5>
+                              <h6 class="red-text m-0 p-0 mb-1">Total Outstanding </h6>
+                            </div>
+                          </div>
+
+                        </div>
+
+                      </div>
+                    </div>
+                  </section>
+                </mat-tab>
+
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-tv fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Connection Status</span>
+                  </ng-template>
+                  <section id="connectionStatus" class="min-height-200 width-100">
+                    <div class="row middle-xs">
+                      <div class="col-xs-12" *ngIf="showCircularLoader6">
+                        <div class="center-align">
+                          <app-me-preloader-circular></app-me-preloader-circular>
+                        </div>
+                      </div>
+
+                      <div class="col-xs-12" *ngIf="!showCircularLoader6">
+                        <ngx-charts-advanced-pie-chart [scheme]="connectionStatuscolorScheme" [results]="connectionStatusData"
+                          [percentageFormatting]="percentageFormatting" [view]="connectionStatusView">
+                        </ngx-charts-advanced-pie-chart>
+                      </div>
+                    </div>
+                  </section>
+
+                </mat-tab>
+              </mat-tab-group>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+              <mat-tab-group class="z-depth-1-half">
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-map-marker-alt fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Areawise Collections</span><br>
+            
+
+                  </ng-template>
+                  <section id="areaWiseCollection" style="max-height: 250px; overflow: auto;">
+
+                    <p-table [columns]="reportCols" [value]="reportArrayList" [style]="{width:'100%'}">
+                      <ng-template pTemplate="caption">
+                        <p class="m-0 p-0">There are {{reportArrayList?.length}} records. ( <small>** active customers only</small> )</p>
+                      </ng-template>
+                      <ng-template pTemplate="header" let-reportCols>
+                        <tr>
+                          <th *ngFor="let col of reportCols">
+                            {{col.header}}
+                          </th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-reportArrayList let-columns="reportCols">
+                        <tr>
+                          <td *ngFor="let col of reportCols" [ngStyle]="{'font-size': '0.75rem'}" [ngSwitch]="col.field"
+                            class="ui-resizable-column">
+
+                           
+                            <span *ngSwitchCase="'collection_amount'">
+                              <span class="right-aligned" style="float:right"> {{ reportArrayList["collection_amount"] |
+                                number :'2.2-2' }}
+                              </span>
+                            </span>
+                           
+                            <span *ngSwitchCase="'received_amount'">
+                              <span class="right-aligned" style="float:right"> {{ reportArrayList["received_amount"] |
+                                number :'2.2-2' }}
+                              </span>
+                            </span>
+
+                            <span *ngSwitchCase="'amount_difference'">
+                              <span class="right-aligned" style="float:right"> {{ ( reportArrayList["amount_diffrence"] ) |
+                                number :'2.2-2' }}
+                              </span>
+                            </span>
+                          
+                            <span *ngSwitchCase="'remarks'">
+                     
+                                <span class="font-weight-500 m-0 p-0">
+                                    <span class="me-status-chip blue fnt-sz-065" *ngIf="(reportArrayList['amount_diffrence'] ) < 0 ">Excess</span>
+                                    <span class="me-status-chip red fnt-sz-065" *ngIf="(reportArrayList['amount_diffrence'] ) > 0 ">Pending</span>
+                                    <span class="me-status-chip green fnt-sz-065" *ngIf="(reportArrayList['amount_diffrence'] ) == 0 ">No Outstanding</span>
+      
+                                </span>
+                              </span>
+
+                            <span *ngSwitchDefault> {{reportArrayList[col.field]}}</span>
+
+                          </td>
+                        </tr>
+                      </ng-template>
+
+
+                    </p-table>
+
+
+                  </section>
+
+
+                </mat-tab>
+                <mat-tab *ngIf="false">
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-user fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Agentwise Collections</span>
+                  </ng-template>
+
+                  <section id="areaWiseCollection" style="max-height: 250px; overflow: auto;">
+
+                    <table class="striped">
+                      <thead class="darkPrimaryText">
+                        <tr>
+                          <th>Agent</th>
+                          <th class="center-align">Collection Amt</th>
+                          <th class="center-align">Received Amt</th>
+                          <th class="center-align">Difference</th>
+                          <th class="center-align">Remarks</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <tr *ngFor="let collectionObj of this._userwiseCollectionList">
+                          <td>
+                            <p class="font-weight-500 m-0 p-0">{{collectionObj.user_name}}</p>
+
+                          </td>
+                          <td class="center-align">
+                            <span class="font-weight-400">{{collectionObj.collection_amount}}</span>
+                          </td>
+                          <td class="center-align">{{collectionObj.received_amount}}</td>
+                          <td class="center-align">{{( collectionObj.collection_amount -
+                            collectionObj.received_amount)}}</td>
+                          <td class="center-align">
+                            <p class="font-weight-500 m-0 p-0">
+                              <span class="me-status-chip blue fnt-sz-065" *ngIf="(collectionObj.collection_amount - collectionObj.received_amount ) < 0 ">Excess</span>
+                              <span class="me-status-chip red fnt-sz-065" *ngIf="(collectionObj.collection_amount - collectionObj.received_amount ) > 0 ">Less</span>
+                              <span class="me-status-chip green fnt-sz-065" *ngIf="(collectionObj.collection_amount - collectionObj.received_amount ) == 0 ">No
+                                Outstanding</span>
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </mat-tab>
+
+              </mat-tab-group>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+              <mat-tab-group class="z-depth-1-half">
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-map-marker-alt fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Area Stats</span>
+                  </ng-template>
+                  <section id="areaStats" style="max-height: 250px; overflow: auto;  overflow-x: hidden; ">
+                    <!-- <h5 class="fnt-sz-150 font-weight-300">You service <span class="font-weight-600">10</span> Areas </h5> -->
+                    <h5 _ngcontent-c2="" class="fnt-sz-150 font-weight-300 p-2 darkPrimaryText" style="text-align: center;">You
+                      service
+                      <span _ngcontent-c2="" class="font-weight-600" style="border-bottom: 2px solid #cdcdd2;">{{this._areawiseCollectionList.length}}</span>
+                      Area(s) </h5>
+
+                    <div class="d-flex flex-row" style="justify-content: space-around;">
+                      <div class="center-align p-1">
+                        <h4 class="m-0 p-0" *ngIf="(this.areawiseSummary.less_collection > 9)">{{this.areawiseSummary.less_collection}}</h4>
+                        <h4 class="m-0 p-0" *ngIf="(this.areawiseSummary.less_collection < 9)">{{( "0" +
+                          this.areawiseSummary.less_collection)}}</h4>
+                        <span class="me-status-chip red fnt-sz-065">Pending</span>
+                      </div>
+                      <div class="center-align p-1">
+                        <h4 class="m-0 p-0" *ngIf="(this.areawiseSummary.less_collection > 9)">{{this.areawiseSummary.no_outstanding}}</h4>
+                        <h4 class="m-0 p-0" *ngIf="(this.areawiseSummary.less_collection < 9)">{{( "0" +
+                          this.areawiseSummary.no_outstanding)}}</h4>
+
+                        <span class="me-status-chip green fnt-sz-065">No Outstanding</span>
+                      </div>
+
+                      <div class="center-align p-1">
+                        <h4 class="m-0 p-0" *ngIf="(this.areawiseSummary.less_collection > 9)">{{this.areawiseSummary.excess_collection}}</h4>
+                        <h4 class="m-0 p-0" *ngIf="(this.areawiseSummary.less_collection < 9)">{{( "0" +
+                          this.areawiseSummary.excess_collection)}}</h4>
+                        <span class="me-status-chip blue fnt-sz-065">Excess</span>
+                      </div>
+
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 ml-2 mr-2 mt-2">
+                        <div class="divider grey lighten-3 mr-4 ml-4"></div>
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-row" style="justify-content: space-around;">
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Highest Collection Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.areawiseSummary.highest_collection.collection_amount | number :
+                          '1.0-0' }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText fnt-sz-065">{{this.areawiseSummary.highest_collection.area_name
+                          }}</span>
+                      </div>
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Lowest Collection Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.areawiseSummary.lowest_collection.collection_amount | number :
+                          '1.0-0' }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText me-text-shawdow fnt-sz-065">{{this.areawiseSummary.lowest_collection.area_name
+                          }}</span>
+                      </div>
+
+                    </div>
+
+                    <div class="d-flex flex-row" style="justify-content: space-around;">
+
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Highest Received Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.areawiseSummary.highest_received.received_amount | number : '1.0-0'
+                          }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText fnt-sz-065">{{this.areawiseSummary.highest_received.area_name}}</span>
+                      </div>
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Lowest Received Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.areawiseSummary.lowest_received.received_amount | number : '1.0-0'
+                          }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText me-text-shawdow fnt-sz-065">{{this.areawiseSummary.lowest_received.area_name
+                          }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-xs-12 ml-2 mr-2 mt-2">
+                        <div class="divider grey lighten-3 mr-4 ml-4"></div>
+                      </div>
+                    </div>
+
+                  </section>
+
+                </mat-tab>
+                <mat-tab *ngIf="false">
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-user fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Agent Stats</span>
+                  </ng-template>
+                  <section id="agentStats" style="max-height: 250px; overflow: auto;  overflow-x: hidden; ">
+                    <!-- <h5 class="fnt-sz-150 font-weight-300">You service <span class="font-weight-600">10</span> Areas </h5> -->
+                    <h5 _ngcontent-c2="" class="fnt-sz-150 font-weight-300 p-2 darkPrimaryText" style="text-align: center;">You
+                      employ
+                      <span _ngcontent-c2="" class="font-weight-600" style="border-bottom: 2px solid #cdcdd2;">{{this._userwiseCollectionList.length}}</span>
+                      Agent(s) </h5>
+
+                    <div class="d-flex flex-row" style="justify-content: space-around;">
+                      <div class="center-align p-1">
+                        <h4 class="m-0 p-0" *ngIf="(this.agentwiseSummary.less_collection > 9)">{{this.agentwiseSummary.less_collection}}</h4>
+                        <h4 class="m-0 p-0" *ngIf="(this.agentwiseSummary.less_collection < 9)">{{( "0" +
+                          this.agentwiseSummary.less_collection)}}</h4>
+                        <span class="me-status-chip red fnt-sz-065">Less</span>
+                      </div>
+                      <div class="center-align p-1">
+                        <h4 class="m-0 p-0" *ngIf="(this.agentwiseSummary.less_collection > 9)">{{this.agentwiseSummary.no_outstanding}}</h4>
+                        <h4 class="m-0 p-0" *ngIf="(this.agentwiseSummary.less_collection < 9)">{{( "0" +
+                          this.agentwiseSummary.no_outstanding)}}</h4>
+
+                        <span class="me-status-chip green fnt-sz-065">No Outstanding</span>
+                      </div>
+
+                      <div class="center-align p-1">
+                        <h4 class="m-0 p-0" *ngIf="(this.agentwiseSummary.less_collection > 9)">{{this.agentwiseSummary.excess_collection}}</h4>
+                        <h4 class="m-0 p-0" *ngIf="(this.agentwiseSummary.less_collection < 9)">{{( "0" +
+                          this.agentwiseSummary.excess_collection)}}</h4>
+                        <span class="me-status-chip blue fnt-sz-065">Excess</span>
+                      </div>
+
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 ml-2 mr-2 mt-2">
+                        <div class="divider grey lighten-3 mr-4 ml-4"></div>
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-row" style="justify-content: space-around;">
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Highest Collection Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.agentwiseSummary.highest_collection.collection_amount | number :
+                          '1.0-0' }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText fnt-sz-065">{{this.agentwiseSummary.highest_collection.user_name
+                          }}</span>
+                      </div>
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Highest Received Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.agentwiseSummary.highest_received.received_amount | number :
+                          '1.0-0' }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText fnt-sz-065">{{this.agentwiseSummary.highest_received.user_name}}</span>
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-row" style="justify-content: space-around;">
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Lowest Collection Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.agentwiseSummary.lowest_collection.collection_amount | number :
+                          '1.0-0' }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText me-text-shawdow fnt-sz-065">{{this.agentwiseSummary.lowest_collection.user_name
+                          }}</span>
+                      </div>
+                      <div class="center-align p-1">
+                        <p class="m-0 p-0 fnt-sz-075 accentTextColor-3 font-weight-300">Lowest Received Amount</p>
+                        <h5 class="m-0 p-0 ">{{this.agentwiseSummary.lowest_received.received_amount | number : '1.0-0'
+                          }}</h5>
+                        <span class="me-status-chip grey lighten-3 darkPrimaryText me-text-shawdow fnt-sz-065">{{this.agentwiseSummary.lowest_received.user_name
+                          }}</span>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-xs-12 ml-2 mr-2 mt-2">
+                        <div class="divider grey lighten-3 mr-4 ml-4"></div>
+                      </div>
+                    </div>
+
+                  </section>
+
+
+                </mat-tab>
+
+              </mat-tab-group>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-md-12">
+              <mat-tab-group>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-thumbs-down  fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Complaint Trend</span>
+                  </ng-template>
+                  <section id="complaintTrend" style="max-height: 250px;width: 100%">
+                    <div class="min-height-200 center-align pt-2" *ngIf="showCircularLoader7">
+                      <app-me-preloader-circular></app-me-preloader-circular>
+                    </div>
+                    <div *ngIf="!showCircularLoader7" class="width-100">
+                      <ngx-charts-pie-grid [scheme]="complaintStatuscolorScheme" [view]="complaintStatusView" [results]="complaintStatusData"
+                        (select)="onSelect($event)">
+                      </ngx-charts-pie-grid>
+
+                    </div>
+                  </section>
+                </mat-tab>
+              </mat-tab-group>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+
+          <div class="row middle-xs">
+            <div class="col-xs-12">
+              <mat-tab-group>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-link fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Quick Links</span>
+                  </ng-template>
+                  <ul class="collection z-depth-1">
+
+                    <li class="collection-item avatar">
+                      <img src="assets/images/managecustomer.svg" alt="" class="circle me-white-border z-depth-2 me-circle-size">
+                      <span class="title">
+                        <a class="darkPrimaryText me-text-shawdow" [routerLink]="['/customerreport']">Manage Customers</a>
+                      </span>
+                      <p>
+                        <small>Allows to create and edit customers. Allows to add balance, add reveresal, add due and
+                          collect bill</small>
+                      </p>
+                      <a [routerLink]="['/customerreport']" class="secondary-content">
+                        <i class="material-icons secondaryTextColor">send</i>
+                      </a>
+                    </li>
+                    <li class="collection-item avatar">
+                      <img src="assets/images/managecomplaint.svg" alt="" class="circle me-white-border z-depth-2 me-circle-size">
+                      <span class="title">
+                        <a class="darkPrimaryText me-text-shawdow" [routerLink]="['/managecomplaint']">Manage
+                          Complaints</a>
+                      </span>
+                      <p>
+                        <small>Allows to create and edit complaints</small>
+                      </p>
+                      <a [routerLink]="['/managecomplaint']" class="secondary-content">
+                        <i class="material-icons secondaryTextColor">send</i>
+                      </a>
+                    </li>
+                    <li class="collection-item avatar">
+                            <img src="assets/images/managepayments.svg" alt="" class="circle me-white-border z-depth-2 me-circle-size">
+                            <span class="title">
+                              <a class="darkPrimaryText me-text-shawdow" [routerLink]="['/managepayments']">Manage Payments</a>
+                            </span>
+                            <p>
+                              <small>Allows to add balance, add reveresal, add due and collect bill</small>
+                            </p>
+                            <a [routerLink]="['/managepayments']" class="secondary-content">
+                              <i class="material-icons secondaryTextColor">send</i>
+                            </a>
+                          </li>
+                    <li class="collection-item avatar">
+                      <img src="assets/images/manageexpense.svg" alt="" class="circle me-white-border z-depth-2 me-circle-size">
+                      <span class="title">
+                        <a class="darkPrimaryText me-text-shawdow" [routerLink]="['/manageexpense']">Manage Expense</a>
+                      </span>
+                      <p>
+                        <small>Allows to create and edit expense</small>
+                      </p>
+                      <a [routerLink]="['/manageexpense']" class="secondary-content">
+                        <i class="material-icons secondaryTextColor">send</i>
+                      </a>
+                    </li>
+
+                  </ul>
+                </mat-tab>
+
+
+              </mat-tab-group>
+
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+
+              <mat-tab-group>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-bullhorn fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Latest News</span>
+                  </ng-template>
+                  <div class="card-panel grey lighten-5">
+                    <div class="" *ngIf="showSlideImage">
+                      <img class="responsive-img animated zoomInDown border-radius-5  z-depth-3 " style="border:4px solid white"
+                        src="{{this.slideImage}}">
+                    </div>
+                    <h6 class="center-align animated tada infinite darkPrimaryText me-text-shawdow">Coming Soon !!</h6>
+                  </div>
+                </mat-tab>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-cubes fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Top Packs</span>
+                  </ng-template>
+                  <ul class="collection z-depth-1">
+                    <li class="collection-item grey lighten-3 ">
+                      <!-- <h5 class="primaryTextColor pt-0 mt-0">Quick Links</h5> -->
+                      <h5 class="darkPrimaryText me-text-shawdow p-0 m-0">Top {{this._packList.length}} Packs</h5>
+                      <small class="grey-text" style="font-style: italic ">
+                        <i class="fas fa-info-circle fa-xs"></i> indicates pack wise stb count</small>
+                    </li>
+                    <li class="collection-item" *ngFor="let pack of this._packList">
+                      <div>
+                        <span class="fnt-sz-125">{{pack.pack_name}}</span>
+                        <span class="badge accent-color-1 white-text">{{pack.stb_count}}</span>
+                      </div>
+                    </li>
+
+
+
+                  </ul>
+                </mat-tab>
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <!-- <mat-icon class="example-tab-icon">thumb_up</mat-icon> -->
+                    <i class="fas fa-map-marker-alt fa-fw mr-1 darkPrimaryText fa-lg "></i>
+                    <span class="fnt-sz-120">Top Areas</span>
+                  </ng-template>
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <div class="card-panel grey lighten-5">
+                        <img class="responsive-img animated zoomInDown border-radius-5  z-depth-3" src="assets/images/me_coming_soon_new.svg">
+                        <h6 class="center-align animated tada infinite darkPrimaryText me-text-shawdow">Coming Soon !!</h6>
+                      </div>
+                    </div>
+                  </div>
+
+                </mat-tab>
+              </mat-tab-group>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- <footer class="page-footer darkPrimaryColor pt-0">
+      <app-me-footer></app-me-footer>
+    </footer> -->
+
+  </div>
+  <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

@@ -1,0 +1,122 @@
+<!-- ************** customerDetails ~ Start ************** -->
+<section id="customerDetails" class="animate fadeIn">
+    <div class="row mt-2">
+        <div class="col-xs-12 col-sm-12 col-md-10  col-lg-10 col-xs-offset-1">
+            <div class="card-panel min-height-100 p-0">
+                <!-- **********************  app-me-preloader-circular ~ start ********************** -->
+                <div class="row mt-3" *ngIf="showCircularLoader" style="height:  100%;">
+                    <br/>
+                    <div class="col-xs-12 col-sm-12 center-xs middle-xs">
+                        <app-me-preloader-circular></app-me-preloader-circular>
+                    </div>
+                </div>
+                <!-- **********************  app-me-preloader-circular ~ end ********************** -->
+                <!-- **********************  Customer Details ~ Start **********************   -->
+                <div class="row  m-0 p-0" *ngIf="!showCircularLoader">
+                    <div class="col-xs-12 col-sm-12 col-md-8  col-lg-8  m-0 p-2">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12">
+                                <h6 class="accentTextColor">
+                                    {{ this.customerName}}</h6>
+                                <p class="m-0 p-0 fnt-sz-075">
+                                    <i class="fas fa-id-badge fa-fw grey-text"></i>
+                                    <strong>{{ this.customerID}}</strong>
+                                </p>
+                                <p class="m-0 p-0 fnt-sz-075">
+                                    <i class="fas fa-phone fa-fw grey-text"></i> {{this.customerPhone}} </p>
+                                <p class="m-0 p-0 fnt-sz-075">
+                                    <i class="fas fa-map-marker fa-fw grey-text"></i> {{ this.customerArea }} </p>
+                                <p class="m-0 p-0 fnt-sz-075">
+                                    <i class="fas fa-map-signs fa-fw grey-text"></i> {{this.customerAddress}} </p>
+                            </div>
+                        </div>
+                        <!-- <div class="divider-05"></div> -->
+                        <div class="row middle-xs center-xs">
+                            <div class="col-xs-12 col-sm-12 col-md-4  col-lg-4">
+                                <a class="modal-trigger" href="#modal-billHistory">
+                                    <span class="me-status-chip grey lighten-1">Bill History</span>
+                                </a>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-4  col-lg-4">
+                                <a class=" modal-trigger" href="#modal-paymentHistory">
+                                    <span class="me-status-chip grey lighten-1">Payment History</span>
+                                </a>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-4  col-lg-4">
+                                <a class="modal-trigger" href="#modal-STBDetails">
+                                    <span class="me-status-chip grey lighten-1">STB Details</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BillHistory Modal Structure - start -->
+                    <div id="modal-billHistory" class="modal modal-fixed-footer">
+                        <!-- Subscription Modal Content - Start -->
+                        <div class="modal-content m-0 ">
+                            <!-- <app-me-bill-history [setCustNumObj]="this.customerNumber"></app-me-bill-history> -->
+                        </div>
+
+                        <!-- Subscription Modal Content - End -->
+                        <div class="modal-footer cg-modal-footer ">
+                            <a class=" modal-action modal-close btn waves-effect waves-light me-gradient-45deg-light-red-darkred z-depth-2 hoverable">Close
+                                <i class="fa fa-ban fa-fw"></i></a>
+                        </div>
+                    </div>
+                    <!-- BillHistory Modal Structure -- End-->
+
+                    <!-- PaymentHistory Modal Structure - start -->
+                    <div id="modal-paymentHistory" class="modal modal-fixed-footer">
+                        <!-- Subscription Modal Content - Start -->
+                        <div class="modal-content m-0 ">
+                            <!-- <app-me-payment-history [setCustNumObj]="this.customerNumber"></app-me-payment-history> -->
+                        </div>
+
+                        <!-- Subscription Modal Content - End -->
+                        <div class="modal-footer cg-modal-footer">
+                            <a class=" modal-action modal-close btn waves-effect waves-light me-gradient-45deg-light-red-darkred z-depth-2 hoverable">Close
+                            <i class="fa fa-ban fa-fw"></i></a>
+                        </div>
+                    </div>
+                    <!-- PaymentHistory Modal Structure - End -->
+
+
+
+                    <!-- STBDetails Modal Structure - Start -->
+                    <div id="modal-STBDetails" class="modal modal-fixed-footer">
+                        <!-- Subscription Modal Content - Start -->
+                        <div class="modal-content ">
+                            <app-me-stb-details [setCustNumObj]="this.customerNumber"></app-me-stb-details>
+                        </div>
+
+                        <!-- Subscription Modal Content - End -->
+                        <div class="modal-footer cg-modal-footer">
+                            <a class=" modal-action modal-close btn waves-effect waves-light me-gradient-45deg-light-red-darkred z-depth-2 hoverable">Close
+                            <i class="fa fa-ban fa-fw"></i></a>
+                        </div>
+                    </div>
+                    <!-- STBDetails Modal Structure - End -->
+
+                    <!--  row  - Start -->
+                    <div class="col-xs-12 col-sm-12 col-md-4  col-lg-4 grey lighten-3">
+                        <div class="row middle-xs center-xs" style="height:  100%;">
+                            <div class="col-xs-12 col-sm-12">
+                                <p class="center mb-0 pb-1 mt-2 pt-2">
+                                    <i class="fas fa-user-circle fa-fw fa-4x darkPrimaryText"></i>
+                                </p>
+                                <p class="center m-0 p-0">
+                                    <span class="me-status-chip red lighten-4 red-text" *ngIf="!this.isPresentActive">Inactive</span>
+                                    <span class="me-status-chip green lighten-4 green-text" *ngIf="this.isPresentActive">Active</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--  row  - End -->
+
+                </div>
+                <!-- **********************  Customer Details ~ End **********************   -->
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ************** customerDetails ~ End ************** -->

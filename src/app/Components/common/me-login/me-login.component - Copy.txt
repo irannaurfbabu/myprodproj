@@ -1,0 +1,132 @@
+// Import Core Libraries/Functionalities
+import { Component, OnInit, ReflectiveInjector } from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl,
+  AbstractControl
+} from "@angular/forms";
+
+// Import Custom Libraries/Functionalities/Services
+import { MeValidateFormFieldsService } from "../../../Service/me-validate-form-fields.service";
+import { MeCommonList } from "../../mobicable/me-class/me-common-list";
+import { MeLoginService } from "../../../Service/me-login.service";
+import { Router } from "@angular/router";
+import { MeUserProfileService } from "../../../Service/me-user-profile.service";
+
+@Component({
+  selector: "app-me-login",
+  templateUrl: "./me-login.component.html",
+  styleUrls: ["./me-login.component.css"]
+})
+export class MeLoginComponent implements OnInit {
+  //-- Create Form Group
+  loginForm: FormGroup;
+  private errorMessage: string;
+  private prograssShow: boolean = false;
+  private userProfile: any;
+
+  // -- Create Instance of Service
+  validateFields: MeValidateFormFieldsService;
+
+  //-- Create List of Fields
+  private user_login_id: AbstractControl;
+  private user_password: AbstractControl;
+
+  // -- constructor -------------------------- ~start ---------------
+
+  constructor(
+    fb: FormBuilder,
+    private records: MeCommonList,
+    private loginservice: MeLoginService,
+    private router: Router,
+    private service: MeUserProfileService
+  ) {
+    /*
+       @details -  Intialize the form group with fields
+          ++ The fields are set to default values - in below case to - null.
+          ++ The fields are assigned validators
+              ** Required Validator
+      */
+
+    this.loginForm = fb.group({
+      user_login_id: [null, Validators.required],
+      user_password: [null, Validators.required]
+    });
+
+    // Assign form controls to private variables
+    // Controls are used in me-login.component.html for accessing values and checking functionalities
+    this.user_login_id = this.loginForm.controls["user_login_id"];
+    this.user_password = this.loginForm.controls["user_password"];
+
+    // Create an _injector_ and ask for it to resolve and create a MeValidateFormFieldsService
+    const injector: any = ReflectiveInjector.resolveAndCreate([
+      MeValidateFormFieldsService
+    ]);
+
+    // use the injector to **get the instance** of the MeValidateFormFieldsService
+    this.validateFields = injector.get(MeValidateFormFieldsService);
+  }
+
+  // -- constructor -------------------------- ~end ---------------
+
+  // -- ngOnInit -------------------------- ~start ---------------
+  ngOnInit() {}
+  // -- ngOnInit -------------------------- ~end ---------------
+
+  // -- onSubmit -------------------------- ~start ---------------
+  onSubmit(value: string): void {
+    /* @details - Check for fields validity
+        ++ Check the loginForm validity
+          ** If the form state is invalid call validateAllFormFields service
+          ** If the form state is valid call http service
+   */
+    this.records.records = [];
+    if (this.loginForm.valid) {
+      console.log("Submitted Values: ", value);
+      this.records.records.push(value);
+      console.log(JSON.stringify(this.records));
+      this.errorMessage = null;
+      this.prograssShow = true;
+
+      // calling login authenticate service
+      this.loginservice.authenticate(this.records).subscribe(response => {
+        if (response.p_out_mssg_flg == "S") {
+          console.log(response.p_out_mssg);
+          this.prograssShow = false;
+
+          // calling login userprofile service
+          this.service.getUserProfile(this.records).subscribe(data => {
+            this.userProfile = data;
+            if (this.userProfile !== undefined) {
+              localStorage.setItem(
+                "testObject",
+                JSON.stringify(this.userProfile)
+              );
+              this.service.setProfile(this.userProfile);
+              console.log("Inside");
+              console.log(this.userProfile);
+              this.router.navigateByUrl("/home");
+            } else {
+              var retrievedObject = localStorage.getItem("testObject");
+              this.userProfile = JSON.parse(retrievedObject);
+              console.log("outside");
+              console.log(this.userProfile);
+              this.service.setProfile(this.userProfile);
+              this.router.navigateByUrl("/home");
+            }
+          });
+          // -- getUserProfile() -------------------------- ~end ---------------
+        }
+        this.prograssShow = false;
+        this.errorMessage = response.p_out_mssg;
+      });
+      // -- authenticate() -------------------------- ~end ---------------
+    } else {
+      this.validateFields.validateAllFormFields(this.loginForm);
+    }
+  }
+
+  // -- onSubmit -------------------------- ~end ---------------
+}

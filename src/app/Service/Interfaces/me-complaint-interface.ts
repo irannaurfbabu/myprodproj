@@ -1,0 +1,33 @@
+export interface MeComplaintInterface {
+     active:string;
+     dmlType:string;
+     comments:string;
+     complaint_id:number;
+     owner_id:number;
+     logged_by:number;
+     complaint_type:string;
+     created_on:number;
+     created_by:string;
+     created_by_id:string;
+     recordType:string;
+     assigned_to:number;
+     complaint_title:string;
+     disabled_on:number;
+     modified_by:String;
+     modified_by_id:number;
+     modified_on:string;
+     complaint_status:string;
+     complaint_title_id:number;
+     customer_id:string;
+     customer_number:number;
+     customer_name:string;
+     area_name:string;
+     complaint_description:string;
+     complaint_number:string;
+
+      complaint_dtls_id:number;
+      complaint_comments:string;
+      assigned_to_name:string;
+      assigned_on:string;
+      flag:boolean;
+}

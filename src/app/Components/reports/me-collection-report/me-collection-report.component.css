@@ -1,0 +1,10 @@
+.me-circle-size {
+    width: 70px !important;
+    height: 70px !important;
+}
+
+.me-card-content-label {
+	padding: 0px; 
+	font-family: Share Tech Mono, monospace; 
+	font-size: 18px;
+}

@@ -1,0 +1,207 @@
+<!-- <header>
+  <app-me-header-nav></app-me-header-nav>
+</header> -->
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;" >
+    
+  <!-- A sidebar -->
+  <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true"  [showBackdrop]="true">
+      <app-me-left-side-nav></app-me-left-side-nav>
+  </ng-sidebar>
+  
+    <!-- Page content -->
+    <div ng-sidebar-content>
+        <!-- header toolbar  Start-->
+          <app-me-header-nav (toggleSidebarEvent) = "receiveToggleSidebarObj($event)"></app-me-header-nav>
+        <!-- header toolbar  End-->
+
+        <section id="me-breadcrumb">
+          <nav class="mt-ng-075">
+            <div class="nav-wrapper me-gradient-white pl-1">
+              <div class="col s12">
+                <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+                <a [routerLink]="['/managearea']" class="breadcrumb  ">Manage Area</a>
+                <a [routerLink]="['/createarea']" class="breadcrumb  ">Create Area</a>
+              </div>
+            </div>
+          </nav>
+        </section>
+<div class="container mb-3">
+<main class="mt-ng-1 mt-1">
+  <div class="pl-2 pr-2 ">
+    <!--Section manageArea - Start -->
+    <section id="createArea">
+
+      <!-- Form Content Row - Start -->
+      <form [formGroup]="createArea" (ngSubmit)="onSubmit(createArea.value)" [class.error]="!createArea.valid && createArea.touched">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xs-offset-1">
+            <!-- CardPanel#1 - Start -->
+            <div class="card-panel m-0 p-0">
+
+              <!-- Form Header Row - Start -->
+              <div class="row mb-1 pb-1">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                      <i class="fas fa-plus-square fa-fw"></i>Create Area
+                  </h5>
+                </div>
+
+              </div>
+              <!-- Form Header Row - End -->
+
+              <!--CardPanel#1 row#1 - Start -->
+              <div class="row pl-2">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <div class="input-field col s12 m6 l3">
+                    <input id="areaName" type="text" class="validate" required maxlength="50"  data-length="50" [formControl]="createArea.controls['area_name']">
+
+                    <label for="areaName" class="me-form-input-label  me-input-label required">Area Name</label>
+
+                    <!-- *********************  form validation  messages ********************* -->
+                    <div class="me-required-text left animated zoomIn" *ngIf="area_name.hasError('required')  && area_name.touched">
+                      <small class="">
+                        <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                    </div>
+                    <div class="me-required-text left animated zoomIn" *ngIf="this.showAlertMessage">
+                      <small class="">
+                        <i class="fas fa-exclamation-triangle fa-fw"></i><strong>Area Name Already Exist</strong></small>
+                    </div>
+                    <div class="me-helper-text left animated zoomIn" *ngIf="!area_name.valid && !area_name.touched">
+                      <small class=""><i class="fas fa-info-circle fa-fw"></i>Enter Area Name</small>
+
+                    </div>
+                    <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                    <!-- *********************  form validation  messages ********************* -->
+
+                    <!-- <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn" *ngIf="showAlertMessage">
+                      <div class="me-alert-card-content orange-text">
+                        <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong>Area Name Already Exist.</p>
+                      </div>
+                   </div> -->
+                   
+                  </div>
+                </div>
+              </div>
+              <!--CardPanel#1 row#1 - End -->
+              <!--CardPanel#1 row#2 - Start -->
+              <div class="row pl-2">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <div class="input-field col s12 m6 l3">
+                    <input id="city" placeholder="Click and type to select city" type="text" class="validate" required maxlength="50" data-length="50"
+                      [formControl]="createArea.controls['city']" matInput [matAutocomplete]="auto" (click)="getCityList()">
+                    <label for="city" class="me-form-input-label me-input-label required active">City</label>
+
+                    <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option *ngFor="let city of filteredCities | async" [value]="city.city_name">
+                        {{ city.city_name }}
+                      </mat-option>
+                    </mat-autocomplete>
+
+                    <!-- *********************  form validation  messages ********************* -->
+                    <div class="me-required-text left animated zoomIn" *ngIf="city.hasError('required')  && city.touched">
+                      <small>
+                          <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                    </div>
+                    <div class="me-helper-text left animated zoomIn" *ngIf="!city.valid && !city.touched">
+                      <small> <i class="fas fa-info-circle fa-fw"></i> Select City</small>
+                    </div>
+                    <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                    <!-- *********************  form validation  messages ********************* -->
+                  </div>
+                </div>
+              </div>
+              <!--CardPanel#1 row#2 - End -->
+              <!--CardPanel#1 row#3 - Start -->
+              <div class="row pl-2">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <div class="input-field col s6 m6 l3">
+                    <input id="state" placeholder="State will be auto populated" type="text" class="validate" readonly maxlength="50" data-length="50"
+                      [formControl]="createArea.controls['state']">
+                    <label for="state" class="me-form-input-label me-input-label active">State</label>
+                    <!-- *********************  form validation  messages ********************* -->
+                    <div class="me-required-text left animated zoomIn" *ngIf="state.hasError('required')  && state.touched">
+                      <small>
+                          <i class="fas fa-exclamation-triangle fa-fw"></i>State is not valid</small>
+                    </div>
+                    <div class="me-helper-text left animated zoomIn" *ngIf="!state.valid && !state.touched">
+                      <small> <i class="fas fa-info-circle fa-fw"></i> Autopopulate State</small>
+                    </div>
+                    <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                    <!-- *********************  form validation  messages ********************* -->
+                  </div>
+                  <div class="input-field col s6 m6 l3">
+                    <input id="pincode" type="text" class="validate" required minlength="6" app-restrict-input="integer" maxlength="6" data-length="6" [formControl]="createArea.controls['pincode']">
+                    <label for="pincode" class="me-form-input-label me-input-label required">Pincode</label>
+                    <!-- *********************  form validation  messages ********************* -->
+                    <div class="me-required-text left animated zoomIn" *ngIf="pincode.hasError('required')  && pincode.touched">
+                      <small>
+                          <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                    </div>
+                    <div class="me-helper-text left animated zoomIn" *ngIf="!pincode.valid && !pincode.touched">
+                      <small><i class="fas fa-info-circle fa-fw"></i> Enter Pincode</small>
+                    </div>
+                    <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                    <!-- *********************  form validation  messages ********************* -->
+                  </div>
+                </div>
+              </div>
+              <!--CardPanel#1 row#3 - End -->
+
+              <!--CardPanel#1 row#4 - Start -->
+              <div class="row pl-2" *ngIf="false">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <div class="input-field col s2" *ngIf="false">
+                    <input id="city_id" placeholder="City ID - auto populated" type="text" [formControl]="createArea.controls['city_id']" readonly >
+                    <label for="city_id" class="me-form-input-label me-input-label active" >City ID</label>
+                  </div>
+
+                  <div class="input-field col s2" *ngIf="false">
+                    <input id="state_id" placeholder="State ID - auto populated" type="text" [formControl]="createArea.controls['state_id']"
+                      readonly>
+                    <label for="state_id" class="me-form-input-label me-input-label active">State ID</label>
+                  </div>
+
+                </div>
+              </div>
+              <!--CardPanel#1 row#4 - End -->
+
+
+            <!-- *************************** Submit Row ***************************   -->
+            <div class="divider me-divider-color mb-1"></div>
+            <section class="mt-1  pr-2 pb-2">
+
+              <!-- form -submit row - Start -->
+              <div class="row end-lg end-sm center-xs end-md mb-0">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                  <a [routerLink]="['/managearea']" class="btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable"
+                    name="cancel"> Cancel
+                    <i class="fas fa-times-circle  fa-fw "></i> 
+                  </a>
+                  <button class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" type="submit"
+                    name="submit" [ngClass]="{'animated wobble': IsformValid}" (mouseover)="IsformValid= (!createArea.valid)"
+                    (mouseout)="IsformValid=false"> Submit
+                    <i class="fas fa-check-circle  fa-fw "></i> 
+                  </button>
+                </div>
+              </div>
+              
+            <!-- form -submit row - end -->
+            </section>
+              <simple-notifications ></simple-notifications>
+            </div>
+            <!-- CardPanel#1 - end -->
+          </div>
+        </div>
+      </form>
+      <!-- Form Content Row - End -->
+
+
+    </section>
+    <!--Section manageArea - End -->
+  </div>
+
+</main>
+</div>
+</div> <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

@@ -1,0 +1,119 @@
+<aside>
+
+    <ul id="slide-out" class="sidenav sidenav-fixed me-sidenav accentColor">
+        <li class="me-border-bottom-menu">
+            <div class="user-view mb-0">
+                <a (click)="NavigateToOwnerProfile();">
+                    <div class="background" id="stardiv">
+                        <!-- <img src="../images/pattern3.jpg"> -->
+                        <div id='stars'></div>
+                        <div id='stars2'></div>
+                        <div id='stars3'></div>
+                    </div>
+
+                    <p class="mb-0 pb-0">
+                        <img class="circle" src="../../../../assets/images/man.svg">
+                    </p>
+                    <p class="m-0 p-0">
+                        <span class="white-text name pb-0 mb-0 mt-0 pt-0">{{this.userName}}</span>
+                    </p>
+                    <p class="m-0 p-0">
+                        <span class="white-text email pb-0 mb-0 mt-0 pt-0">{{this.userEmail}}</span>
+                    </p>
+                </a>
+            </div>
+        </li>
+        <!-- <li>
+      <div class="divider white"></div>
+    </li> -->
+        <li>
+            <ul class="collapsible" id="me-menu-links">
+                <li>
+                    <a [routerLink]="['/home']" class="collapsible-header primaryTextColor z-depth-1">
+                        <i class="material-icons primaryTextColor">dashboard</i> Home
+
+                    </a>
+                </li>
+                <li>
+                    <div class="collapsible-header primaryTextColor z-depth-1">
+                        <i class="material-icons primaryTextColor">web</i>Forms</div>
+                    <div class="collapsible-body me-sidenav-collapse-background">
+                        <ul>
+                            <li>
+                                <a [routerLink]="['/customerreport']" class="primaryTextColor font-weight-300">
+                                    <i class=" fas fa-users m-0 primaryTextColor fnt-sz-075"></i> Manage Customer</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="['/managecomplaint']" class="primaryTextColor font-weight-300">
+                                    <i class=" fas fa-comments m-0 primaryTextColor fnt-sz-075"></i> Manage Complaints</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="['/managepayments']" class="primaryTextColor font-weight-300">
+                                    <i class=" fas fa-rupee-sign m-0 primaryTextColor fnt-sz-075"></i> Manage Payments</a>
+                            </li>
+                            <li *ngIf="UserRoleOwner">
+                                <a [routerLink]="['/manageuser']" class="primaryTextColor font-weight-300">
+                                    <i class=" fas fa-user-plus m-0 primaryTextColor fnt-sz-075"></i> Manage Users</a>
+                            </li>
+                            <li *ngIf="UserRoleOwner">
+                                <a [routerLink]="['/managepack']" class="primaryTextColor font-weight-300">
+                                    <i class=" fas fa-tv m-0 primaryTextColor fnt-sz-075"></i> Manage Pack</a>
+                            </li>
+                            <li *ngIf="UserRoleOwner">
+                                <a [routerLink]="['/managearea']" class="primaryTextColor font-weight-300">
+                                    <i class=" fas  fa-map-marker-alt  m-0 primaryTextColor fnt-sz-075"></i> Manage Area</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="['/manageexpense']" class="primaryTextColor font-weight-300">
+                                    <i class="fas fa-money-bill-alt  m-0 primaryTextColor fnt-sz-075"></i> Manage Expense</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="collapsible-header primaryTextColor z-depth-1">
+                        <i class="material-icons primaryTextColor">chrome_reader_mode</i> Reports
+                    </div>
+                    <div class="collapsible-body me-sidenav-collapse-background">
+                        <ul>
+                            <li>
+                                <a [routerLink]="['/collectionreport']" class="primaryTextColor font-weight-300">
+                                    <i class=" fa fa-users m-0 primaryTextColor fnt-sz-075"></i>Collection Report</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="['/customerreport']" class="primaryTextColor font-weight-300">
+                                    <i class=" fa fa-users m-0 primaryTextColor fnt-sz-075"></i>Customer Report</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="['/customerreportold']" class="primaryTextColor font-weight-300">
+                                    <i class=" fa fa-users m-0 primaryTextColor fnt-sz-075"></i>Customer Report Old</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="['/unpaidreport']" class="primaryTextColor font-weight-300">
+                                    <i class=" fa fa-comments m-0 primaryTextColor fnt-sz-075"></i>Unpaid Report</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="['/gstreport']" class="primaryTextColor font-weight-300">
+                                    <i class=" fa fa-users m-0 primaryTextColor fnt-sz-075"></i>Gst Report</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+            </ul>
+
+        </li>
+
+
+
+
+    </ul>
+
+
+
+
+    <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large">
+        <i class="material-icons">menu</i>
+    </a>
+</aside>

@@ -1,0 +1,31 @@
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                              id="Capa_1" x="0px" y="0px" viewBox="0 0 409.6 409.6" style="enable-background:new 0 0 409.6 409.6;"
+                              xml:space="preserve">
+                              <circle style="fill:#eeeeee ;" cx="204.8" cy="204.8" r="204.8" />
+
+                              <rect x="151.962" y="306.432" style="fill:#D15241;" width="105.673" height="15.697" />
+                              <g>
+
+                                  <rect x="172.384" y="98.827" transform="matrix(-0.8617 0.5074 -0.5074 -0.8617 393.1543 146.2148)" style="fill:#2F4859;" width="8.533"
+                                      height="55.723" />
+
+                                  <rect x="200.711" y="120.725" transform="matrix(-0.5283 0.8491 -0.8491 -0.5283 455.4496 -3.0499)" style="fill:#2F4859;" width="55.723"
+                                      height="8.533" />
+                              </g>
+                              <circle style="fill:#E56353;" cx="161.182" cy="98.944" r="11.486" />
+                              <path style="fill:#DC8744;" d="M172.668,162.828c0-10.964,13.714-19.853,30.63-19.853s30.63,8.888,30.63,19.853" />
+                              <circle style="fill:#E56353;" cx="245.419" cy="98.944" r="11.486" />
+                              <rect x="90.496" y="157.687" style="fill:#2F4859;" width="228.565" height="151.62" />
+                              <rect x="105.143" y="168.405" style="fill:#1C75A1;" width="177.109" height="130.18" />
+                              <polygon style="fill:#2D93BA;" points="282.251,168.408 218.775,168.408 105.142,298.586 134.542,298.586 " />
+                              <g>
+                                  <circle style="fill:#D15241;" cx="300.885" cy="281.165" r="12.843" />
+                                  <circle style="fill:#D15241;" cx="300.885" cy="251.302" r="12.843" />
+                              </g>
+                              <g>
+                                  <rect x="288.085" y="184.107" style="fill:#D5D6DB;" width="23.74" height="6.511" />
+                                  <rect x="288.085" y="197.888" style="fill:#D5D6DB;" width="23.74" height="6.511" />
+                                  <rect x="288.085" y="211.669" style="fill:#D5D6DB;" width="23.74" height="6.511" />
+                              </g>
+
+                          </svg>

@@ -1,0 +1,535 @@
+<!-- <header>
+    <app-me-header-nav></app-me-header-nav>
+</header> -->
+
+<ng-sidebar-container style="height: 100vh;" >
+        
+    <!-- A sidebar -->
+    <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true"  [showBackdrop]="true">
+        <app-me-left-side-nav></app-me-left-side-nav>
+    </ng-sidebar>
+      
+    <!-- Page content -->
+    <div ng-sidebar-content>
+        <!-- header toolbar  Start-->
+        <app-me-header-nav (toggleSidebarEvent) = "receiveToggleSidebarObj($event)"></app-me-header-nav>
+        <!-- header toolbar  End-->
+
+<section id="me-breadcrumb">
+    <nav class="mt-ng-075">
+        <div class="nav-wrapper me-gradient-white pl-1">
+            <div class="col s12">
+                <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+                <a [routerLink]="['/manageuser']" class="breadcrumb  ">Manage User</a>
+                <a [routerLink]="['/edituser']" class="breadcrumb  ">Edit User</a>
+
+            </div>
+        </div>
+    </nav>
+</section>
+
+<div class="container mb-0">
+<!--Main Container - Start -->
+<main class="mt-ng-1 mt-1">
+    <div class="pl-2 pr-2">
+        <!--Section editUser - Start -->
+        <section id="editUser">
+
+            <!-- show form pre-loader - start -->
+            <div class="row middle-xs center-xs mt-5" *ngIf="this.showLoader">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <app-me-form-preloader></app-me-form-preloader>
+
+                </div>
+            </div>
+            <!-- show form pre-loader - end -->
+
+
+            <!-- Form Content Row - Start -->
+            <form [formGroup]="editUser" (ngSubmit)="onSubmit(editUser.value)" [class.error]="!editUser.valid && editUser.touched">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <!-- CardPanel#1 - Start -->
+                        <div class="card-panel m-0 p-0 animated fadeIn" *ngIf="!this.showLoader">
+                            <div class="row mb-1 pb-1">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                        <i class="fas fa-edit fa-fw"></i>Edit User</h5>
+                                </div>
+                            </div>
+
+                            <!--CardPanel#1 row#1 - Start -->
+                            <div class="row m-1">
+                                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+
+                                    <!--Column#1 row#1 - Start -->
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="input-field col s12">
+                                                <input id="username" type="text" class="validate" app-restrict-input="word" [readonly]="isInactive" [ngClass]="{'me-readonly': this.isInactive }" required maxlength="25" data-length="25" [formControl]="editUser.controls['user_name']">
+                                                <label for="username" class="me-form-input-label active">User Name</label>
+
+                                                <!-- *********************  form validation  messages ********************* -->
+                                                <div class="me-required-text left animated zoomIn" *ngIf="user_name.hasError('required')  && user_name.touched">
+                                                    <small class="">
+                              <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                </div>
+                                                <div class="me-helper-text left animated zoomIn" *ngIf="!user_name.valid && !user_name.touched">
+                                                    <small class="">
+                              <i class="fas fa-info-circle fa-fw"></i>Enter User Name</small>
+
+                                                </div>
+                    
+                                                <!-- *********************  form validation  messages ********************* -->
+
+
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="input-field col s12">
+                                                <input id="userphone" type="text" class="validate" app-restrict-input="phone" [readonly]="isInactive" [ngClass]="{'me-readonly': this.isInactive }" required maxlength="10" data-length="10" [formControl]="editUser.controls['user_phone']">
+                                                <label for="userphone" class="me-form-input-label active">User Phone</label>
+
+                                                <!-- *********************  form validation  messages ********************* -->
+                                                <div class="me-required-text left animated zoomIn" *ngIf="user_phone.hasError('required')  && user_phone.touched">
+                                                    <small class="">
+                                                    <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                </div>
+                                                <div class="me-required-text left animated zoomIn" *ngIf="this.showAlertMessage">
+                                                    <small class="">
+                                                    <i class="fas fa-exclamation-triangle fa-fw"></i>Phone Number Already Exist</small>
+                                                </div>
+                                                <div class="me-helper-text left animated zoomIn" *ngIf="!user_phone.valid && !user_phone.touched">
+                                                    <small class="">
+                                                    <i class="fas fa-info-circle fa-fw"></i>Enter User Phone</small>
+
+                                                </div>
+                                                     <!-- *********************  form validation  messages ********************* -->
+
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="input-field col s12">
+                                                <input id="useremail" type="email" class="validate" maxlength="30" data-length="30" [readonly]="isInactive" [ngClass]="{'me-readonly': this.isInactive }" [formControl]="editUser.controls['user_email']">
+                                                <label for="useremail" class="me-form-input-label active">User Email</label>
+
+                                                <!-- *********************  form validation  messages ********************* -->
+                                                <div class="me-helper-text left animated zoomIn" *ngIf="!user_email.valid && !user_email.touched">
+                                                    <small class="">
+                              <i class="fas fa-info-circle fa-fw"></i>Enter User Email (optional) </small>
+
+                                                </div>
+                                              
+                                                <!-- *********************  form validation  messages ********************* -->
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <!--Column#1 row#1 - End -->
+                                    <!--Column#1 row#2 - Start -->
+                                    <div class="row">
+                                        
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="input-field col s12">
+                                                <label class="me-form-input-label active">
+                                                    User Role
+                                                </label>
+                                                <mat-form-field>
+                                                <mat-select id="userrole"  class="validate me-form-input-label active p-2 " [disabled]="isInactive" required [formControl]="editUser.controls['user_role']">
+                                                   <mat-option disabled>Choose One</mat-option>
+                                                    <mat-option value="1002">Supervisor</mat-option>
+                                                    <mat-option value="1003">Master Agent</mat-option>
+                                                     <mat-option value="1004">Collection Agent</mat-option>
+                                                    <mat-option value="1005">Service Agent</mat-option>
+                                                </mat-select>
+                                                 <mat-hint><span *ngIf="!user_role.valid && !user_role.touched" class="me-helper-text">
+                                                                    <i class="fas fa-info-circle fa-fw"></i>Select Dropdown </span></mat-hint>
+                                                        <mat-error  *ngIf="user_role.hasError('required') && user_role.touched"> 
+                                                            <small class="">
+                                                                    <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                        </mat-error>
+                                                </mat-form-field>
+                                                                                              </div>
+                                        </div>
+
+                                            <!--new installation limit-->
+                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                <div class="input-field col s12 ">
+                                                    <label class="me-form-input-label active">
+                                                        Installation Limit
+                                                    </label>
+                                                    <mat-form-field>
+                                                        <mat-select id="userinstall" class="validate me-form-input-label active p-2"  [disabled]="isInactive" [formControl]="editUser.controls['user_install']">
+                                                            <mat-option>Choose One</mat-option>
+                                                            <mat-option value="1">1</mat-option>
+                                                            <mat-option value="3">3</mat-option>
+                                                            <mat-option value="5">5</mat-option>
+                                                        </mat-select>
+                                                        <mat-hint>
+                                                            <span *ngIf="!user_install.valid && !user_install.touched" class="me-helper-text">
+                                                                <i class="fas fa-info-circle fa-fw"></i>Select Dropdown </span>
+                                                        </mat-hint>
+                                                        
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                            <!--installation limit end-->
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="input-field col s12">
+                                                <input id="deviceid" type="text" placeholder="Device ID" readonly [formControl]="editUser.controls['device_id']" class="me-readonly">
+                                                <label for="deviceid" class="me-form-input-label active">Device ID</label>
+
+                                                <!-- *********************  form validation  messages ********************* -->
+                                                <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                    <small class="">
+                              <i class="fas fa-info-circle fa-fw"></i>Autopopulate Device ID</small>
+
+                                                </div>
+                                                <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                <!-- *********************  form validation  messages ********************* -->
+
+                                            </div>
+                                        </div>
+                                     
+
+                                    </div>
+                                 <!--Column#1 row#2 - End -->
+                                    <!--Column#1 row#3 - Start -->
+                                    <div class="row">
+                                        <!--Column#1 row#3 new Offline Mode Row -start-->
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="input-field col s12">
+
+                                                <label class="me-form-input-label active">
+                                                     Specify Limit
+                                                </label>
+                                                
+                                                <mat-form-field>
+                                                    <!-- <mat-label class="me-form-input-label "> Specify Limit</mat-label> -->
+                                                    <mat-select id="useroffline"  class="validate me-form-input-label active " [disabled]="isInactive"  [formControl]="editUser.controls['user_spec']">  
+                                                        <mat-option value="blank">Choose One</mat-option>
+                                                        <mat-option value="SAL">Sync Amt Limit</mat-option>
+                                                        <mat-option value="OAL">Offline Amt Limit</mat-option>
+                                                        <mat-option value="NOT">No of Transactions</mat-option>
+                                                    </mat-select>
+                                                 <mat-hint><span *ngIf="!user_spec.valid && !user_spec.touched"class="me-helper-text">
+                                                                    <i class="fas fa-info-circle fa-fw"></i>Select Dropdown (optional) </span></mat-hint>
+                                                    </mat-form-field>
+                                                    </div>
+                                        </div>
+                                            <!--column#1 row#3 new Offline Mode Row end h-->
+                                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" >
+                                                <div *ngIf="Showvalue">
+                                                           <div *ngIf="this.Showlimit" class="input-field col s12"  >
+                                                    <input id="offlinelimit" type="text" min="100" max="99999" required  app-restrict-input="amount" [readonly]="isInactive" [ngClass]="{'me-readonly': this.isInactive }"  [formControl]="editUser.controls['user_offline_limit']">
+                                                    <label for="offlinelimit" class="me-form-input-label active " >Enter Limit </label>
+                                                  
+                                                    <!-- *********************  form validation  messages ********************* -->
+                                                    <div class="me-required-text left animated zoomIn" *ngIf="user_offline_limit.hasError('required')  && user_offline_limit.touched">
+                                                        <small class="">
+                                                            <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                       </div>
+                                                    <div class="me-helper-text left animated zoomIn" *ngIf="!user_offline_limit.valid && !user_offline_limit.touched">
+                                                        <small class="">
+                                                            <i class="fas fa-info-circle fa-fw"></i>Enter Limit</small>
+                                                    
+                                                       </div>
+                                                    
+                                                    <!-- *********************  form validation  messages ********************* -->
+                                            
+                                                </div>
+                                                
+                                                <div *ngIf="!this.Showlimit" class="input-field col s12"  >
+                                                    <input id="offlinelimit" type="text" min="1" max="99" required app-restrict-input="amount" [readonly]="isInactive" [ngClass]="{'me-readonly': this.isInactive }" maxlength="2" [formControl]="editUser.controls['user_offline_limit']">
+                                                    <label for="offlinelimit" class="me-form-input-label active" >Enter Limit</label>
+                                                   
+                                                   <!-- *********************  form validation  messages ********************* -->
+                                                                <div class="me-required-text left animated zoomIn" *ngIf="user_offline_limit.hasError('required')  && user_offline_limit.touched">
+                                                                    <small class="">
+                                                                        <i class="fas fa-exclamation-triangle fa-fw"></i>Required</small>
+                                                                </div>
+                                                                <div class="me-helper-text left animated zoomIn" *ngIf="!user_offline_limit.valid && !user_offline_limit.touched">
+                                                                    <small class="">
+                                                                        <i class="fas fa-info-circle fa-fw"></i>Enter Limit</small>
+                                                                
+                                                                </div>
+                                                               
+                                                                <!-- *********************  form validation  messages ********************* -->
+                                            </div>
+                                            </div>
+                                               </div>
+                                            
+                                        <!--column#1 row#3 new Offline Mode Row end-->
+                                    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
+                                        <div class="input-field input-field s12"> 
+                                            <div class="switch" >
+                                                <label>
+                                                    <span class="me-status-chip lighten-1 "    [ngClass]="{'red': this.isInactive, 'grey': !this.isInactive  }">Inactive</span>
+                                                    <input type="checkbox" [formControl]="editUser.controls['status']" (click)="setStatus() ">
+                                                    <span class="lever"></span>
+                                                    <span class=" me-status-chip  lighten-1" [ngClass]="{'green': this.isActive, 'grey': !this.isActive  }">Active</span>
+                                    
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                             
+                                </div>
+
+                                <!--Column#2 row#1 - Start -->
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                    <div class="card-panel m-0 p-0">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <h6 class="grey lighten-3 m-0 p-3 darkPrimaryText me-text-shawdow font-weight-500">User Login Details</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row m-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="input-field col s12">
+                                                    <input id="loginid" type="text" placeholder="Username will be auto populated" maxlength="15" data-length="15" readonly [formControl]="editUser.controls['login_id']" class="me-readonly">
+                                                    <label for="loginid" class="me-form-input-label active ">Login ID</label>
+                                                    <!-- *********************  form validation  messages ********************* -->
+                                                    <div class="me-helper-text left animated zoomIn" *ngIf="true">
+                                                        <small class="">
+                                                            <i class="fas fa-info-circle fa-fw"></i>Autopopulate Login ID
+                                                        </small>
+                                                    </div>
+                                                    <!-- *********************  form validation  messages ********************* -->
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="input-field col s12">
+                                                        <span (click)="toggleViewPassword()">
+                                                                <i class="postfix fas fa-eye-slash grey-text text-lighten-1" *ngIf="this.passwordView" ></i>
+                                                                <i class="postfix fas fa-eye grey-text text-lighten-1" *ngIf="!this.passwordView" ></i></span>
+                                                    <input id="password" [type]="passwordView ? 'text' : 'password'" required maxlength="25" [readonly]="isInactive" [ngClass]="{'me-readonly': this.isInactive }" [formControl]="editUser.controls['user_password']" placeholder="">
+                                                    <label for="password" class="me-form-input-label active">User Password</label>
+
+                                                    <!-- *********************  form validation  messages ********************* -->
+                                                    <div class="me-required-text left animated zoomIn" *ngIf="user_password.hasError('required')  && user_password.touched">
+                                                        <small class="">
+                                                            <i class="fas fa-exclamation-triangle fa-fw"></i>Required
+                                                        </small>
+                                                    </div>
+                                                    <div class="me-helper-text left animated zoomIn" *ngIf="!user_password.valid && !user_password.touched">
+                                                        <small class="">
+                                                            <i class="fas fa-info-circle fa-fw "></i>Enter User Password
+                                                        </small>
+                                                    </div>
+                                                    <!-- *********************  form validation  messages ********************* -->
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    <!--Column#2 row#1 - End -->
+                                </div>
+                                <!--Column#2 row#1 - End -->
+
+                            </div>
+                            <!--Column#1 row#1 - End -->
+
+                            <!--CardPanel#1 row#2 - Start -->
+                            <div class="row m-1">
+                                <!--row#2 - Column#1  - Start -->
+                                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                    <div class="card-panel m-0 p-0">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <h6 class="grey lighten-3 m-0 p-2 darkPrimaryText me-text-shawdow font-weight-500">User Area Details</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row top-xs mb-0">
+                                            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                <div class="input-field col s12	">
+                                                    <span (click)="clearinputfield()">
+                                                        <i class="postfix fas fa-times fa-xs grey-text text-lighten-1 " ></i>
+                                                    </span>
+                                                    <input id="adduserarea" type="search" placeholder="Click\Type to select area"   type="search" maxlength="50" data-length="50" [formControl]="editUser.controls['adduserarea']" [readonly]="isInactive" [ngClass]="{'me-readonly': this.isInactive }" matInput [matAutocomplete]="auto" (click)="getAreaList()">
+                                                    <label for="adduserarea" class="me-form-input-label active">User Area</label>
+
+                                                    <mat-autocomplete #auto="matAutocomplete">
+                                                        <mat-option (click)="selectall()"> Select All</mat-option>
+                                                        <mat-option *ngFor="let area of filteredAreas | async" [value]="area.area_name">
+                                                            {{ area.area_name }}
+                                                        </mat-option>
+                                                    </mat-autocomplete>
+                                                    <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn" *ngIf="requirePack">
+                                                        <div class="me-alert-card-content orange-text">
+                                                            <p>
+                                                                <strong>
+                                                                    <i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong> Choose atleast one area!</p>
+                                                                  </div>
+                                                    </div>
+                                              <div class="me-helper-text left animated zoomIn" *ngIf= "!adduserarea.touched">
+                                                    <small class="">
+                                                        <i class="fas fa-info-circle fa-fw "></i>Select area and Click add button to add area</small>
+                                                </div>
+                                  
+                                             </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 ">
+                                                <a id="addarea"class="btn btn-block waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2  hoverable" name="addarea" (click)="addArea()">
+                                                    Add 
+                                                    <i class="fa fa-plus-circle fa-fw"></i>
+                                                </a>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="row m-1">
+                                            <table class="highlight  responsive-table"  >
+                                                <thead class="secondaryTextColor">
+                                                    <tr class="cg-table-hdr light-primary-text" >
+                                                        <th class="center-align">#</th>
+                                                        <th class="left-align">Area Name</th>
+                                                        <th class="center-align ">Action</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                    <tr *ngIf="showTableLoader">
+                                                        <td colspan="3" class="center">
+                                                            <div class="progress">
+                                                                <div class="indeterminate"></div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr *ngIf="showNoRecords">
+                                                        <td colspan="3" class="center">
+                                                            <div>
+                                                                <span class="me-status-chip red lighten-1">No Records</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr *ngFor="let arearows of areaArrayList |paginate: { itemsPerPage: productsPerPage, currentPage: p };let i = index ">
+                                                        <td class="center-align ">{{(p - 1) * 5 + i +1}}</td>
+                                                        <td class="left-align">{{arearows.area_name}}</td>
+                                                        <td   class="center-align " >
+                                                             <a class=" btn btn-flat white" (click)="deleteArea(arearows.area_id,arearows.area_name)" >
+                                                                <i class="fa fa-trash-alt fa-lg red-text" ></i>
+                                                            </a>
+                                                          
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <!-- Section2 - row3 - Start -->
+                                            <div class="col-xs-12 col-sm-12 col-mdd-12 col-lg-12">
+                                                <pagination-control class="me-pagination" directionLinks="true" (pageChange)="p = $event" align="right"></pagination-control>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!--row#2 - Column#1  - End -->
+
+                                <!--row#2 - Column#2  - Start -->
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+
+
+                                </div>
+                                <!--row#2 - Column#2  - End -->
+
+                            </div>
+                            <!--Column#1 row#2 - End -->
+
+                            <!-- *************************** Submit Row ***************************   -->
+                            <div class="divider me-divider-color mb-1"></div>
+                            <section class="mt-1  pr-2 pb-2">
+
+                            <!-- form -submit row - Start -->
+                            <div class="row end-lg end-sm center-xs end-md mb-0">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                    <a [routerLink]="['/manageuser']" class="btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable" name="cancel"> Cancel
+                      <i class="fas fa-times-circle  fa-fw"></i>
+                    </a>
+                                    <button class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" type="submit" name="submit"  [ngClass]="{'animated wobble': IsformValid}" (mouseover)="IsformValid= (!editUser.valid)" (mouseout)="IsformValid=false">Submit
+                      <i class="fas fa-check-circle  fa-fw"></i>
+                    </button>
+                                </div>
+                            </div>
+                        </section>
+                            <!-- form -submit row - end -->
+
+                        </div>
+                        <!-- CardPanel#1 - end -->
+                    </div>
+                </div>
+            </form>
+            <!-- Form Content Row - End -->
+
+            <!-- userRecordHistory history - Start ====================================== -->
+            <div class="row" id="userRecordHistory" *ngIf="!this.showLoader">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="card-panel p-0 z-depth-0 me-recordHistory ">
+                        <table class="responsive-table centered">
+                            <thead>
+                                <tr>
+                                    <th class="  font-weight-500 m-0 p-0">
+                                        <small>Created On</small>
+                                    </th>
+                                    <th class="   font-weight-500 m-0 p-0">
+                                        <small>Created By</small>
+                                    </th>
+                                    <th class="   font-weight-500 m-0 p-0">
+                                        <small>Last Modified On</small>
+                                    </th>
+                                    <th class="   font-weight-500 m-0 p-0">
+                                        <small>Last Modified By</small>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="m-0 p-0">
+                                <tr class="m-0 p-0">
+                                    <td class="  m-0 p-0">
+                                        <small> {{this.record_create_on |  date:'EEEE, LLL d, y, h:mm:ss a' }} </small>
+                                    </td>
+                                    <td class="   m-0 p-0">
+                                        <small> {{this.record_create_by}} </small>
+                                    </td>
+                                    <td class="   m-0 p-0">
+                                        <small> {{this.record_modified_on  | date:'EEEE, LLL d, y, h:mm:ss a' }}</small>
+                                    </td>
+                                    <td class="   m-0 p-0">
+                                        <small> {{this.record_modified_by}}</small>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- userRecordHistory history - End ====================================== -->
+
+        </section>
+        <!--Section editUser - End -->
+    </div>
+<simple-notifications></simple-notifications>
+</main>
+<!--Main Container - End -->
+</div>
+</div> <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

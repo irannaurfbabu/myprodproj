@@ -1,0 +1,57 @@
+<!-- ************** Stb Details ~ Start ************** -->
+
+<!-- row#01 -------------------------------- -->
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="card-panel m-0 p-0 ">
+            <div class="row ">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                        <i class="fas fa-book pr-1"></i>STB Details</h5>
+                </div>
+            </div>
+
+            <!-- td-data-table row  - start -->
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                    <div *ngIf="showLoader">
+                        <app-me-table-preloader></app-me-table-preloader>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                    <td-data-table #dataTable [data]="filteredData" [columns]="columns" [sortable]="true" [sortBy]="sortBy" [clickable]="true" [sortOrder]="sortOrder" (sortChange)="sort($event)">
+
+                        <ng-template tdDataTableTemplate="service_status" let-value="value">
+                            <span *ngIf="value == 'ACTIVE'" class="me-status-chip green lighten-4 green-text right-align">ACTIVE</span>
+                            <span *ngIf="value == 'SUSPENDED'" class="me-status-chip orange lighten-4 orange-text right-align">SUSPENDED</span>
+                            <span *ngIf="value == 'DISCONNECTED'" class="me-status-chip red lighten-4 red-text right-align">DISCONNECTED</span>
+                            <span *ngIf="value == 'FREEBOX'" class="me-status-chip blue lighten-4 blue-text right-align">FREE BOX</span>
+                        </ng-template>
+                    </td-data-table>
+                    <div class="center mt-2" *ngIf="this.showNoRecords">
+                        <span class="me-status-chip red lighten-1">No Records</span>
+                    </div>
+
+                    <td-paging-bar #pagingBar [pageSize]="pageSize" [total]="filteredTotal" (change)="page($event)">
+                        <span hide-xs>Rows per page:</span>
+                        <mat-select [style.width.px]="50" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}">
+                            <mat-option *ngFor="let size of [50,100,200]" [value]="size">
+                                {{size}}
+                            </mat-option>
+                        </mat-select>
+                        {{pagingBar.range}}
+                        <span hide-xs>of {{pagingBar.total}}</span>
+                    </td-paging-bar>
+                </div>
+            </div>
+            <!-- td-data-table row  - End -->
+
+
+
+
+        </div>
+    </div>
+</div>
+<!-- ************** Stb Details ~ End ************** -->
+
+<!-- row#01 -------------------------------- -->

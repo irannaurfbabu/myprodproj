@@ -1,0 +1,315 @@
+
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container style="height: 100vh;">
+
+    <!-- A sidebar -->
+    <ng-sidebar #sidebar [(opened)]="_opened" [mode]="'over'" [closeOnClickOutside]="true" [showBackdrop]="true">
+        <app-me-left-side-nav></app-me-left-side-nav>
+    </ng-sidebar>
+
+    <!-- Page content -->
+    <div ng-sidebar-content>
+        <!-- header toolbar  Start-->
+        <app-me-header-nav (toggleSidebarEvent)="receiveToggleSidebarObj($event)"></app-me-header-nav>
+        <!-- header toolbar  End-->
+
+        <section id="me-breadcrumb">
+            <nav class="mt-ng-075">
+                <div class="nav-wrapper me-gradient-white pl-1">
+                    <div class="col s12">
+                        <a [routerLink]="['/home']" class="breadcrumb   ">Home</a>
+                        <a [routerLink]="['/manageexpense']" class="breadcrumb  ">Manage Expense</a>
+                        <a [routerLink]="['/createexpense']" class="breadcrumb  ">Create Expense</a>
+
+                    </div>
+                </div>
+            </nav>
+        </section>
+
+        <!--Main Container - Start -->
+        <div class="container mb-3">
+            <main class="mt-ng-1 mt-1">
+                <div class="pl-2 pr-2">
+                    <!--Section manageArea - Start -->
+                    <section id="createExpense">
+
+                        <!-- Form Content Row - Start -->
+                        <form [formGroup]="createExpense" (ngSubmit)="onSubmit(createExpense.value)" [class.error]="!createExpense.valid && createExpense.touched">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <!-- CardPanel#1 - Start -->
+                                    <div class="card-panel m-0 p-0">
+                                        <!--CardPanel#1 row#1 - Start -->
+
+                                        <!-- Form Header Row - Start -->
+                                        <div class="row middle-xs mb-1 pb-1">
+                                            <div class="col-xs-8 col-sm-8 col-md-12 col-lg-12">
+                                                <h5 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">
+                                                    <i class="fas fa-plus-square fa-fw"></i>Create Expense
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <!-- Form Header Row - End -->
+
+                                        <div class="row p-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                <!--Column#1 row#1 - Start -->
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                        <div class="input-field col s12">
+                                                            <input id="expense_title" type="text" class="validate" app-restrict-input="alphanumeric" required maxlength="50" data-length="50" [formControl]="createExpense.controls['expense_title']">
+                                                            <label for="expense_title" class="me-form-input-label">Expense Title</label>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="expense_title.hasError('required')  && expense_title.touched">
+                                                                <small class="">
+                                                                <i class="fa fa-warning fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!expense_title.valid && !expense_title.touched">
+                                                                <small class="">Enter expense title</small>
+                                                            </div>
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                        <div class="input-field s12">
+                                                            <select id="expense_category" [formControl]="createExpense.controls['expense_category']">
+                                                            <option value="" disabled selected>Choose your option</option>
+                                                            <option *ngFor="let option of _expenseCategorySelect" value={{option.value}}>{{option.label}}</option>
+                                                          </select>
+                                                            <label class="me-form-input-label" for="packtype">
+                                                            <small>Expense Category</small>
+                                                          </label>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="expense_category.hasError('required')  && expense_category.touched">
+                                                                <small class="">
+                                                              <i class="fa fa-warning fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!expense_category.valid && !expense_category.touched">
+                                                                <small class="">Select Pack Type</small>
+                                                            </div>
+                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <br>
+                                                <!--Column#1 row#1 - End -->
+                                                <!--Column#1 row#2 - Start -->
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
+                                                        <div class="input-field col s12">
+                                                            <label class="me-form-input-label active font-weight-500">
+                                                        Choose a date
+                                                        </label>
+                                                            <input matInput [matDatepicker]="picker" [formControl]="createExpense.controls['expense_date']" (dateChange)="ExpanseDateChange($event.value);" placeholder="Choose a date" style="width:80%" [readonly]="true" [ngClass]="{'me-readonly': true }">
+                                                            <mat-datepicker-toggle matSuffix [for]="picker" ></mat-datepicker-toggle>
+                                                            <mat-datepicker #picker [disabled]="false"></mat-datepicker>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                        <div class="input-field s12">
+                                                            <select id="expense_price_type" [formControl]="createExpense.controls['expense_price_type']">
+                                                            <option value="" disabled selected>Choose your option</option>
+                                                            <option value="TP">Total Price</option>
+                                                            <option value="BPGST">Base Price with GST</option>
+                                                            <option value="TPGST">Total Price with GST</option>
+
+                                                          </select>
+                                                            <label class="me-form-input-label">
+                                                            <small>Price Type</small>
+                                                          </label>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="expense_price_type.hasError('required')  && expense_price_type.touched">
+                                                                <small class="">
+                                                                <i class="fa fa-warning fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!expense_price_type.valid && !expense_price_type.touched">
+                                                                <small class="">Select Price Type</small>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                        <div class="input-field col s12">
+                                                            <input id="expense_amount" type="text" class="validate" app-restrict-input="amount" required maxlength="5" min="10" max="9999" data-length="5" [formControl]="createExpense.controls['expense_amount']">
+                                                            <label for="expense_amount" class="me-form-input-label active">Amount</label>
+
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                            <div class="me-required-text left animated zoomIn" *ngIf="expense_amount.hasError('required') && expense_amount.touched">
+                                                                <small class="">
+                                                              <i class="fas fa-warning fa-fw"></i>Required</small>
+                                                            </div>
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="expense_amount.valid">
+                                                                <small class="">Enter Amount Greater Than 0 </small>
+                                                            </div>
+                                                            <!-- <div class="me-helper-text left animated zoomIn" *ngIf="!pack_price.valid">
+                                                            <small class="fa fa-warning fa-fw">Enter Amount Greater Than 0 </small>
+                                                        </div> -->
+                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <!-- <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                                                  <div class="me-alert-card orange lighten-5 z-depth-1-half border-radius-4 animated bounceIn pr-1" *ngIf="ShowPackPrice">
+                                                      <div class="me-alert-card-content orange-text">
+                                                          <p><strong><i class="fas fa-exclamation-triangle fa-fw  "></i>WARNING : </strong> Pack price must be greater than 10 </p>
+                                                      </div>
+                                                  </div>
+                                              </div> -->
+                                                <!--Column#1 row#2 - End -->
+                                                <!--Column#1 row#3 - Start -->
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                        <div class="input-field col s12">
+                                                            <input id="expense_description" type="text" maxlength="100" data-length="100" [formControl]="createExpense.controls['expense_description']">
+                                                            <label for="expense_description" class="me-form-input-label">Expense Description</label>
+                                                            <!-- *********************  form validation  messages ********************* -->
+
+                                                            <div class="me-helper-text left animated zoomIn" *ngIf="!expense_description.valid && !expense_description.touched">
+                                                                <small class="">Enter Expense Description(optional)</small>
+                                                            </div>
+                                                            <!-- <div class="green-text left " style="margin-left: 45px;" *ngIf="user_password.valid  && user_password.touched"><small></small></div> -->
+                                                            <!-- *********************  form validation  messages ********************* -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--Column#1 row#3 - End -->
+
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                                <!--Column#2 row#1 - End -->
+
+                                                <ul class="collection with-header">
+                                                    <li class="collection-header m-0 p-1 center-align grey lighten-3 m-0 p-1">
+                                                        <h6 class="grey lighten-3 m-0 p-1 darkPrimaryText me-text-shawdow font-weight-500">Expense Price Details</h6>
+                                                    </li>
+                                                    <li class="collection-item">
+                                                        <div>
+                                                            <strong class="secondaryTextColor">Base Price</strong>
+                                                            <span class="secondary-content">
+                                                            {{ calculatePrice.base_price | number : '1.2-2' }}
+                                                        </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="collection-item">
+                                                        <div>
+                                                            <strong class="secondaryTextColor">CGST (9%)</strong>
+                                                            <span class="secondary-content ">
+                                                                {{ calculatePrice.cgst_amount | number : '1.2-2' }}
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="collection-item">
+                                                        <div>
+                                                            <strong class="secondaryTextColor">SGST (9%)</strong>
+                                                            <span class="secondary-content">
+                                                                {{ calculatePrice.sgst_amount | number : '1.2-2' }}
+                                                        </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="collection-item">
+                                                        <div>
+                                                            <strong class="secondaryTextColor">Total Tax (18%)</strong>
+                                                            <span class="secondary-content">
+                                                                {{ calculatePrice.total_tax | number : '1.2-2' }}
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="collection-item">
+                                                        <div>
+                                                            <strong class="secondaryTextColor">Total</strong>
+                                                            <span class="secondary-content font-weight-700">
+                                                            <i class="fas fa-rupee-sign fa-fw"></i> 
+                                                            {{ calculatePrice.total_amount | number : '1.2-2' }}
+                                                        </span>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+
+                                                <!--Column#2 row#1 - End -->
+                                            </div>
+                                        </div>
+                                        <!--Column#1 row#1 - End -->
+
+                                        <!-- Column#1 row#3 - Start -->
+
+                                        <div class="row p-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+                                                <h6 class=" secondaryTextColor ">Expense Summary</h6>
+                                                <div class="divider me-divider-color  mb-1  "></div>
+                                                <table class="centered z-depth-2 striped ">
+                                                    <thead class="accent-color-1 primaryTextColor">
+                                                        <tr>
+                                                            <th class="p-0 m-0">Expense Title</th>
+                                                            <th class="p-0 m-0">Category</th>
+                                                            <th class="p-0 m-0">Expense Date</th>
+                                                            <th class="p-0 m-0">Total Amount</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                {{displayExpenseTitle}}
+                                                            </td>
+                                                            <td>
+                                                                {{displayCategory}}
+                                                            </td>
+                                                            <td>
+                                                                {{displayExpenseDate | date:' LLL d, y, h:mm:ss a' }}
+                                                            </td>
+                                                            <td>
+                                                                {{displaytotal | number : '1.2-2' }}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- Column#1 row#3 - End -->
+
+                                        <!-- *************************** Submit Row ***************************   -->
+                                        <div class="divider me-divider-color mb-1"></div>
+                                        <section class="mt-1  pr-2 pb-2">
+
+                                            <!-- form -submit row - Start -->
+                                            <div class="row end-lg end-sm center-xs end-md mb-0">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                                    <a [routerLink]="['/managepack']" class="btn waves-effect waves-light border-round me-gradient-45deg-light-red-darkred z-depth-2  hoverable" name="cancel"> Cancel
+                                      <i class="fas fa-times-circle  fa-fw "></i> 
+                                  </a>
+                                                    <button class="btn waves-effect waves-light border-round me-gradient-45deg-light-blue-cyan z-depth-2 hoverable" type="submit" name="submit" [ngClass]="{'animated wobble': IsformValid}" (mouseover)="IsformValid= (!createExpense.valid)" (mouseout)="IsformValid=false"> Submit
+                                      <i class="fas fa-check-circle  fa-fw  "></i> 
+                                  </button>
+                                                </div>
+                                            </div>
+                                            <!-- form -submit row - end -->
+                                        </section>
+                                    </div>
+                                    <!-- CardPanel#1 - end -->
+                                </div>
+                            </div>
+                        </form>
+                        <!-- Form Content Row - End -->
+
+                        <simple-notifications></simple-notifications>
+                    </section>
+                    <!--Section manageArea - End -->
+                </div>
+            </main>
+            <!--Main Container - End -->
+        </div>
+    </div>
+    <!-- end -- ng-sidebar-content-->
+</ng-sidebar-container>

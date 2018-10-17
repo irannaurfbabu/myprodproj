@@ -1,0 +1,40 @@
+<div class="navbar-fixed z-depth-1 ">
+    <nav>
+      <div class="nav-wrapper accentColor">
+        <a href="javascript:void(0);" class="brand-logo center">{{this.ownerCompanyName }}</a>
+        <ul class="center hide-on-med-and-down">
+          <li>
+            <span matTooltip="Menu">
+              <a href="javascript:void(0);" (click)="_toggleSidebar()" class="" data-position="bottom" data-delay="50" data-tooltip="Menu">
+                <i class="material-icons">menu</i>
+              </a>      
+            </span>
+          </li>
+          
+         
+          <li style="float: right;">
+            <span matTooltip="Logout">
+              <a href="javascript:void(0);" (click)="logout()" class="" data-position="bottom" data-delay="50">
+                <i class="material-icons">keyboard_tab</i>
+              </a>
+            </span>
+          </li>
+          <li style="float: right;">
+            <span matTooltip="Help Center">
+              <a [routerLink]="['/helpcenter']" >
+                <i class="material-icons">live_help</i> 
+              </a>
+            </span>
+          </li>
+          <!-- <li style="float: right;">
+              <span matTooltip="Full Screen">
+              <a class="toggle-fullscreen" data-position="bottom" data-delay="50" (click) = "toggleFullScreen()"  id="toggleElementID">
+                  <i class="material-icons">settings_overscan</i>
+              </a>
+              </span>
+            </li> -->
+        </ul>
+      </div>
+    </nav>
+  </div>
+ 

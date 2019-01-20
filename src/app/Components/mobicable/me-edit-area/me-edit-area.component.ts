@@ -174,9 +174,9 @@ export class MeEditAreaComponent implements OnInit {
             private validateFields            : MeValidateFormFieldsService,
             public  zone                      : NgZone,
             public  route                     : ActivatedRoute,
-             public  router                    : Router,
-             public notification               : MeToastNotificationService,
-             private gzipService               :MeGzipService,
+            public  router                    : Router,
+            public notification               : MeToastNotificationService,
+            private gzipService               :MeGzipService,
   ) {
     // set the show loader flag to true
     this.showLoader = true;
